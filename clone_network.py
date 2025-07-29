@@ -26,6 +26,32 @@ def _ensure_db():
 KEYWORDS = {"glitch", "frequency", "vibration", "null"}
 keyword_stats = {}
 
+# Persisted storage files
+MESSAGES_FILE = "clone_messages.log"
+MEMORIES_FILE = "shared_memory.txt"
+TASKS_FILE = "tasks.log"
+RESULTS_FILE = "task_results.log"
+
+
+def _load_lines(path):
+    """Return list of non-empty lines from a file."""
+    if os.path.exists(path):
+        try:
+            with open(path, "r") as f:
+                return [line.strip() for line in f if line.strip()]
+        except Exception:
+            pass
+    return []
+
+
+def _append_line(path, line):
+    """Append a single line to a file, ignore errors."""
+    try:
+        with open(path, "a") as f:
+            f.write(line + "\n")
+    except Exception:
+        pass
+
 
 def _update_keyword_stats(clone_id, text):
     """Increment keyword counts for the given clone based on text."""
@@ -62,10 +88,11 @@ def _update_keyword_stats(clone_id, text):
 app = Flask(__name__)
 CORS(app)
 
-messages = []
-memories = []
-tasks = []
-results = []
+# Load persisted data
+messages = _load_lines(MESSAGES_FILE)
+memories = _load_lines(MEMORIES_FILE)
+tasks = _load_lines(TASKS_FILE)
+results = _load_lines(RESULTS_FILE)
 
 @app.route('/health', methods=['GET'])
 def health():
@@ -79,7 +106,9 @@ def send_message():
     msg = data.get('message', '')
     if msg:
         msg = sanitize_text(msg)
-        messages.append(f"{clone_id}: {msg}")
+        entry = f"{clone_id}: {msg}"
+        messages.append(entry)
+        _append_line(MESSAGES_FILE, entry)
         _update_keyword_stats(clone_id, msg)
         return jsonify({'status': 'ok'})
     return jsonify({'error': 'missing message'}), 400
@@ -95,7 +124,9 @@ def remember_fact():
     fact = data.get('fact', '')
     if fact:
         fact = sanitize_text(fact)
-        memories.append(f"{clone_id}: {fact}")
+        entry = f"{clone_id}: {fact}"
+        memories.append(entry)
+        _append_line(MEMORIES_FILE, entry)
         _update_keyword_stats(clone_id, fact)
         return jsonify({'status': 'ok'})
     return jsonify({'error': 'missing fact'}), 400
@@ -117,6 +148,7 @@ def add_task():
     if task:
         task = sanitize_text(task)
         tasks.append(task)
+        _append_line(TASKS_FILE, task)
         return jsonify({'status': 'queued'})
     return jsonify({'error': 'missing task'}), 400
 
@@ -134,9 +166,22 @@ def store_result():
     clone_id = data.get('id', 'unknown')
     if result is not None:
         result = sanitize_text(str(result))
-        results.append(f"{clone_id}: {result}")
+        entry = f"{clone_id}: {result}"
+        results.append(entry)
+        _append_line(RESULTS_FILE, entry)
         return jsonify({'status': 'stored'})
     return jsonify({'error': 'missing result'}), 400
+
+
+@app.route('/updates', methods=['GET'])
+def all_updates():
+    """Return all stored messages, memories, tasks and results."""
+    return jsonify({
+        'messages': messages,
+        'memories': memories,
+        'tasks': tasks,
+        'results': results,
+    })
 
 if __name__ == '__main__':
     port = int(os.getenv('CLONE_PORT', '5000'))
