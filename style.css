@@ -1,0 +1,31 @@
+
+body {
+  background-color: black;
+  color: #0ff;
+  font-family: monospace;
+  background-image: radial-gradient(ellipse at center, #000 0%, #111 100%);
+  overflow: hidden;
+}
+#container {
+  max-width: 600px;
+  margin: 100px auto;
+  padding: 20px;
+  border: 1px solid #0ff;
+  background: rgba(0, 0, 0, 0.9);
+}
+input, button {
+  display: block;
+  margin-top: 10px;
+  width: 100%;
+  background: black;
+  color: #0ff;
+  border: 1px solid #0ff;
+  padding: 8px;
+}
+#output {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px dashed #0ff;
+  min-height: 100px;
+  background-color: rgba(0,0,0,0.5);
+}
