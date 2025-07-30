@@ -36,8 +36,34 @@ python clone_client.py --help
 ### Sensitive Data Firewall
 `clone_network.py` now masks API keys and other tokens from shared messages and tasks. Set `FIREWALL_PATTERNS` with comma-separated regexes to customize what gets filtered.
 
-### Excess Compute Sharing
-Run `excess_compute.py` on each clone to contribute idle CPU time back to the cluster. The script checks local CPU usage and only requests tasks from the server when below the `CPU_THRESHOLD` (default 50%). Set `CLONE_SERVER_URL` to the running `clone_network.py` instance and queue tasks via the `/task` endpoint.
+### Distributed Compute Sharing
+You can pool spare CPU cycles from multiple machines using the clone network.
+
+1. **Start the server** on a central node:
+   ```bash
+   python clone_network.py
+   ```
+
+2. **Launch workers** on every machine that should contribute compute power:
+   ```bash
+   export CLONE_SERVER_URL=http://<server-host>:5000
+   python excess_compute.py
+   ```
+   Workers only fetch tasks when their average CPU usage is below the
+   `CPU_THRESHOLD` environment variable (50% by default).
+
+3. **Queue tasks** from any client using the updated `clone_client.py`:
+   ```bash
+   python clone_client.py queue-task "echo hello"
+   ```
+   Results can be viewed with:
+   ```bash
+   python clone_client.py results
+   ```
+
+**Warning:** queued commands are executed with the system shell on each worker.
+Never accept tasks from untrusted sources and avoid running this network on
+machines with sensitive data.
 
 
 ### ChatGPT Integration

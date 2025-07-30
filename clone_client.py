@@ -48,6 +48,27 @@ def fetch_task():
         print('error:', resp.text)
 
 
+def queue_task(task: str):
+    resp = requests.post(f"{SERVER_URL}/task", json={'task': task})
+    if resp.ok:
+        print('task queued')
+    else:
+        print('error:', resp.text)
+
+
+def read_results():
+    resp = requests.get(f"{SERVER_URL}/updates")
+    if resp.ok:
+        data = resp.json()
+        results = data.get('results', [])
+        if results:
+            print('\n'.join(results))
+        else:
+            print('(no results)')
+    else:
+        print('error:', resp.text)
+
+
 def submit_result(result: str):
     resp = requests.post(f"{SERVER_URL}/task/result", json={'id': CLONE_ID, 'result': result})
     if resp.ok:
@@ -72,6 +93,11 @@ def main():
 
     sub.add_parser('fetch-task', help='request a queued task')
 
+    queue_p = sub.add_parser('queue-task', help='add a task to the queue')
+    queue_p.add_argument('task')
+
+    sub.add_parser('results', help='read completed task results')
+
     result_p = sub.add_parser('submit-result', help='report task result')
     result_p.add_argument('result')
 
@@ -87,6 +113,10 @@ def main():
         get_memories()
     elif args.cmd == 'fetch-task':
         fetch_task()
+    elif args.cmd == 'queue-task':
+        queue_task(args.task)
+    elif args.cmd == 'results':
+        read_results()
     elif args.cmd == 'submit-result':
         submit_result(args.result)
     else:
