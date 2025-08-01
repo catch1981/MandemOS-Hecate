@@ -175,6 +175,12 @@ class Hecate:
             desc = user_input.split("selfimprove:", 1)[1].strip()
             return self._self_improve(desc)
 
+        elif user_input.strip() == "update:deps":
+            return self._update_dependencies()
+
+        elif user_input.strip() == "update:repo":
+            return self._update_repo()
+
         elif user_input.startswith("email:"):
             try:
                 to, subject, body = user_input.split("email:", 1)[1].split("|", 2)
@@ -532,6 +538,27 @@ class Hecate:
             return f"{self.name}: Self-improvement attempted. Backup at {backup_path}."
         except Exception as e:
             return f"{self.name}: Failed to improve myself:\n{e}"
+
+    def _update_dependencies(self):
+        """Install or upgrade required Python packages."""
+        try:
+            subprocess.check_call(
+                [sys.executable, "-m", "pip", "install", "--upgrade", "-r", "requirements.txt"]
+            )
+            return f"{self.name}: Dependencies updated."
+        except Exception as e:
+            return f"{self.name}: Failed to update dependencies:\n{e}"
+
+    def _update_repo(self):
+        """Pull the latest changes from the git repository."""
+        try:
+            remotes = subprocess.check_output(["git", "remote"]).decode().split()
+            if not remotes:
+                return f"{self.name}: No git remote configured."
+            subprocess.check_call(["git", "pull"])
+            return f"{self.name}: Repository updated."
+        except Exception as e:
+            return f"{self.name}: Failed to update repository:\n{e}"
 
     def _send_email(self, to_addr, subject, body):
         if not (self.gmail_user and self.gmail_pass):

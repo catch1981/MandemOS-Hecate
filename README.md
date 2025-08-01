@@ -235,3 +235,7 @@ python insert_metadata.py
 
 This inserts the scroll information from `metadata.json` into the `scrolls` table.
 
+### Updating Dependencies and Repository
+Use `update:deps` to install or upgrade the Python packages listed in `requirements.txt`.
+Run `update:repo` to pull the latest changes from the Git repository.
+
