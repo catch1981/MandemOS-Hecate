@@ -1,3 +1,7 @@
 flask
 requests
 openai
+
+flask_cors
+SpeechRecognition
+beautifulsoup4
