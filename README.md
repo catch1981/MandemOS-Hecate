@@ -207,6 +207,13 @@ python hecate.pyz -b       # background
 
 This will start the API server directly from the zip file.
 
+### Self Start on Failure
+Run `autostart.py` to keep the server running even if it crashes. The script
+launches `__main__.py` (or a custom entry defined in `HECATE_ENTRY`) and
+restarts it whenever the process exits with a non‑zero status. Use
+`RESTART_DELAY` to control the delay between restarts and `HECATE_ARGS` to
+provide additional command‑line arguments to the entry script.
+
 ### Self Repair and Improvement
 Use `selfrepair:description` to attempt an automated fix of Hecate's own code based on the issue description. Similarly, `selfimprove:suggestion` asks Hecate to refactor itself with the provided suggestion. Both commands rely on your OpenAI API key and create a `.bak` backup of the current source before overwriting it if successful.
 
