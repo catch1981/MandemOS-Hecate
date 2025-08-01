@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from hecate import Hecate
 import argparse
@@ -12,6 +12,10 @@ CORS(app)
 
 # Instantiate Hecate
 hecate = Hecate()
+
+# Directory for files users can download
+SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "scripts")
+os.makedirs(SCRIPTS_DIR, exist_ok=True)
 
 
 def run_server():
@@ -52,6 +56,22 @@ def talk_audio():
         return jsonify({"error": f"Speech recognition failed: {e}"}), 400
     response = hecate.respond(text)
     return jsonify({"transcript": text, "reply": response})
+
+
+@app.route("/files", methods=["GET"])
+def list_files():
+    """Return a JSON list of available files in the scripts directory."""
+    files = [f for f in os.listdir(SCRIPTS_DIR) if os.path.isfile(os.path.join(SCRIPTS_DIR, f))]
+    return jsonify({"files": files})
+
+
+@app.route("/files/<path:filename>", methods=["GET"])
+def get_file(filename):
+    """Send a file from the scripts directory if it exists."""
+    safe_path = os.path.abspath(os.path.join(SCRIPTS_DIR, filename))
+    if not safe_path.startswith(os.path.abspath(SCRIPTS_DIR)) or not os.path.isfile(safe_path):
+        return jsonify({"error": "File not found"}), 404
+    return send_from_directory(SCRIPTS_DIR, os.path.relpath(safe_path, SCRIPTS_DIR), as_attachment=True)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Hecate API server")

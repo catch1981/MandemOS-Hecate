@@ -134,6 +134,7 @@ Both the CLI tools and the API server automatically read the key from these loca
    Load balancers can poll this URL to verify the service is running.
 
 3. Open `index.html` in your browser. The page will communicate with the server running on `localhost:8080`.
+   The interface now includes buttons for voice input and speech output. A file list lets you download any files saved in the `scripts/` directory.
 
 ### Command Line Chat
 If you prefer to talk to Hecate directly in your terminal, run the small CLI utility:
@@ -179,6 +180,7 @@ Use `move:src|dest` to move or rename files within the `scripts/` folder.
 Use `list` to view files saved in `scripts/`.
 Use `read:filename` to display a file's contents.
 Use `delete:filename` to remove a file.
+Files saved in this directory can be downloaded from the API using `/files/<filename>`.
 
 ### Location Tagging
 Capture your current browser location and email it using the command format `location:lat|lon|recipient`.
