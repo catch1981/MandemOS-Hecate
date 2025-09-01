@@ -1,7 +1,0 @@
-[build]
-  # use npm install since you don’t have a committed lockfile
-  command = "npm install --no-audit --no-fund && npm run build"
-  publish = "dist"
-
-[build.environment]
-  NODE_VERSION = "18"
