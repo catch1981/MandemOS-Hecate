@@ -1,6 +1,7 @@
 [build]
-  publish = "."
-  command = ""
+  # use npm install since you don’t have a committed lockfile
+  command = "npm install --no-audit --no-fund && npm run build"
+  publish = "dist"
 
-[dev]
-  command = "netlify dev"
+[build.environment]
+  NODE_VERSION = "18"
