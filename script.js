@@ -27,3 +27,23 @@ function generateResponse(input) {
 
   return "No scroll found. Say it again, with intent.";
 }
+
+function addApi() {
+  const api = document.getElementById('apiInput').value.trim();
+  const output = document.getElementById('output');
+  if (!api) return;
+  fetch('/add_api', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ api })
+  })
+    .then(response => response.json())
+    .then(data => {
+      output.innerHTML += `<div><strong>System:</strong> ${data.status}</div>`;
+      output.scrollTop = output.scrollHeight;
+    })
+    .catch(() => {
+      output.innerHTML += `<div><strong>Error:</strong> Failed to add API.</div>`;
+    });
+  document.getElementById('apiInput').value = '';
+}
