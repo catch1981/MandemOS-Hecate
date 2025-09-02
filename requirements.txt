@@ -1,7 +1,7 @@
 beautifulsoup4
 firebase-admin
-flask
-flask-cors
+Flask
+Flask-Cors
 openai
 psutil
 pyngrok
