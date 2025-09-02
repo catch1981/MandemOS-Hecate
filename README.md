@@ -3,6 +3,10 @@
 
 > The daemon who codes, commits, and controls the flame of your GitHub repo.
 
+### Personalization
+
+Open the web interface and click **Settings** to customize your experience. You can set a username, choose text and background colors, and pick a wallpaper. Preferences are saved in your browser.
+
 ### Server Administration
 Colby Atcheson is the server administrator. Update `server_admins.json` to grant additional admin access.
 
