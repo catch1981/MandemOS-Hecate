@@ -2,79 +2,141 @@ import argparse
 import os
 import requests
 
-SERVER_URL = os.getenv('CLONE_SERVER_URL', 'http://localhost:5000')
+def _load_endpoints():
+    env = os.getenv('CLONE_ENDPOINTS')
+    if env:
+        return [u.strip() for u in env.split(',') if u.strip()]
+    url = os.getenv('CLONE_SERVER_URL', 'http://localhost:5000')
+    return [url]
+
+ENDPOINTS = _load_endpoints()
 CLONE_ID = os.getenv('CLONE_ID', os.uname().nodename)
 
 
 def send_message(message: str):
-    resp = requests.post(f"{SERVER_URL}/send", json={'id': CLONE_ID, 'message': message})
-    if resp.ok:
+    ok = False
+    for url in list(ENDPOINTS):
+        try:
+            resp = requests.post(f"{url}/send", json={'id': CLONE_ID, 'message': message}, timeout=5)
+            if resp.ok:
+                ok = True
+        except Exception:
+            ENDPOINTS.remove(url)
+    if ok:
         print('message sent')
     else:
-        print('error:', resp.text)
+        print('error: unable to send message')
 
 
 def read_messages():
-    resp = requests.get(f"{SERVER_URL}/read")
-    if resp.ok:
-        print(resp.text)
+    texts = []
+    for url in list(ENDPOINTS):
+        try:
+            resp = requests.get(f"{url}/read", timeout=5)
+            if resp.ok:
+                data = resp.text.strip()
+                if data:
+                    texts.append(data)
+        except Exception:
+            ENDPOINTS.remove(url)
+    if texts:
+        print('\n'.join(texts))
     else:
-        print('error:', resp.text)
+        print('error: no data')
 
 
 def remember_fact(fact: str):
-    resp = requests.post(f"{SERVER_URL}/remember", json={'id': CLONE_ID, 'fact': fact})
-    if resp.ok:
+    ok = False
+    for url in list(ENDPOINTS):
+        try:
+            resp = requests.post(f"{url}/remember", json={'id': CLONE_ID, 'fact': fact}, timeout=5)
+            if resp.ok:
+                ok = True
+        except Exception:
+            ENDPOINTS.remove(url)
+    if ok:
         print('fact stored')
     else:
-        print('error:', resp.text)
+        print('error: unable to store fact')
 
 
 def get_memories():
-    resp = requests.get(f"{SERVER_URL}/memories")
-    if resp.ok:
-        print(resp.text)
+    texts = []
+    for url in list(ENDPOINTS):
+        try:
+            resp = requests.get(f"{url}/memories", timeout=5)
+            if resp.ok:
+                data = resp.text.strip()
+                if data:
+                    texts.append(data)
+        except Exception:
+            ENDPOINTS.remove(url)
+    if texts:
+        print('\n'.join(texts))
     else:
-        print('error:', resp.text)
+        print('error: no data')
 
 
 def fetch_task():
-    resp = requests.get(f"{SERVER_URL}/task/assign", params={'id': CLONE_ID})
-    if resp.ok:
-        data = resp.json()
-        task = data.get('task')
-        print(task if task else '(no task)')
-    else:
-        print('error:', resp.text)
+    for url in list(ENDPOINTS):
+        try:
+            resp = requests.get(f"{url}/task/assign", params={'id': CLONE_ID}, timeout=5)
+            if resp.ok:
+                data = resp.json()
+                task = data.get('task')
+                print(task if task else '(no task)')
+                return
+        except Exception:
+            ENDPOINTS.remove(url)
+    print('error: unable to fetch task')
 
 
 def queue_task(task: str):
-    resp = requests.post(f"{SERVER_URL}/task", json={'task': task})
-    if resp.ok:
+    ok = False
+    for url in list(ENDPOINTS):
+        try:
+            resp = requests.post(f"{url}/task", json={'task': task}, timeout=5)
+            if resp.ok:
+                ok = True
+        except Exception:
+            ENDPOINTS.remove(url)
+    if ok:
         print('task queued')
     else:
-        print('error:', resp.text)
+        print('error: unable to queue task')
 
 
 def read_results():
-    resp = requests.get(f"{SERVER_URL}/updates")
-    if resp.ok:
-        data = resp.json()
-        results = data.get('results', [])
-        if results:
-            print('\n'.join(results))
-        else:
-            print('(no results)')
+    lines = []
+    for url in list(ENDPOINTS):
+        try:
+            resp = requests.get(f"{url}/updates", timeout=5)
+            if resp.ok:
+                data = resp.json()
+                results = data.get('results', [])
+                if results:
+                    lines.extend(results)
+        except Exception:
+            ENDPOINTS.remove(url)
+    if lines:
+        print('\n'.join(lines))
     else:
-        print('error:', resp.text)
+        print('(no results)')
 
 
 def submit_result(result: str):
-    resp = requests.post(f"{SERVER_URL}/task/result", json={'id': CLONE_ID, 'result': result})
-    if resp.ok:
+    ok = False
+    for url in list(ENDPOINTS):
+        try:
+            resp = requests.post(f"{url}/task/result", json={'id': CLONE_ID, 'result': result}, timeout=5)
+            if resp.ok:
+                ok = True
+        except Exception:
+            ENDPOINTS.remove(url)
+    if ok:
         print('result stored')
     else:
-        print('error:', resp.text)
+        print('error: unable to store result')
 
 
 def main():
