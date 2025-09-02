@@ -1,7 +1,7 @@
 {
   "scripts": {
     "start": "http-server .",
-    "build": "echo \"No build step\"",
+    "build": "hugo",
     "test": "node --test"
   },
   "dependencies": {

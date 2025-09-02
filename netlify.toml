@@ -8,17 +8,11 @@
 ## an existing lockfile.
 
 [build]
-  # For this project there is no compile step – it's a plain HTML/JS site.
-  # We still run `npm install` so that Netlify will generate a lockfile
-  # (required by `npm ci` if you later enable that) and to satisfy the
-  # build command requirement. The build script defined in package.json
-  # simply echoes a message and does nothing else.
+  # Install npm dependencies and run the Hugo build script.
   command = "npm install --no-audit --no-fund && npm run build"
 
-  # The site files (index.html, script.js, style.css) live in the root
-  # of the repository. Set the publish directory to "." so Netlify
-  # serves these files directly.
-  publish = "."
+  # Hugo outputs the generated site to the "public" directory.
+  publish = "public"
 
 [build.environment]
   # Pin the Node.js version to match Netlify's default LTS version.
