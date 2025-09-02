@@ -14,9 +14,9 @@ CORS(app)
 hecate = Hecate()
 
 
-def run_server():
-    """Start the Flask API server."""
-    app.run(host="0.0.0.0", port=8080)
+def run_server(host: str, port: int) -> None:
+    """Start the Flask API server on the given host and port."""
+    app.run(host=host, port=port)
 
 @app.route("/health", methods=["GET"])
 def health():
@@ -61,11 +61,29 @@ if __name__ == "__main__":
         action="store_true",
         help="Run the front end API server in the background",
     )
+    parser.add_argument(
+        "--host",
+        default=os.getenv("HOST", "0.0.0.0"),
+        help="Host interface to bind to",
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=int(os.getenv("PORT", "8080")),
+        help="Port to listen on",
+    )
     args = parser.parse_args()
 
     if args.background:
         # Relaunch this script detached from the current session
-        cmd = [sys.executable, os.path.abspath(__file__)]
+        cmd = [
+            sys.executable,
+            os.path.abspath(__file__),
+            "--host",
+            args.host,
+            "--port",
+            str(args.port),
+        ]
         subprocess.Popen(
             cmd,
             stdout=subprocess.DEVNULL,
@@ -75,4 +93,4 @@ if __name__ == "__main__":
         )
         print("Server started in background")
     else:
-        run_server()
+        run_server(args.host, args.port)

@@ -12,13 +12,26 @@ def main():
         action="store_true",
         help="Run the server in the background",
     )
+    parser.add_argument(
+        "--host",
+        default=os.getenv("HOST", "0.0.0.0"),
+        help="Host interface to bind to",
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=int(os.getenv("PORT", "8080")),
+        help="Port to listen on",
+    )
     args = parser.parse_args()
 
     current_dir = os.path.dirname(__file__)
     script = os.path.join(current_dir, "OK workspaces", "main.py")
 
+    script_args = ["--host", args.host, "--port", str(args.port)]
+
     if args.background:
-        cmd = [sys.executable, script, "-b"]
+        cmd = [sys.executable, script, "-b"] + script_args
         subprocess.Popen(
             cmd,
             stdout=subprocess.DEVNULL,
@@ -28,6 +41,7 @@ def main():
         )
         print("Server started in background")
     else:
+        sys.argv = [script] + script_args
         runpy.run_path(script, run_name="__main__")
 
 if __name__ == "__main__":
@@ -43,4 +57,5 @@ def home():
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))  # 👈 uses Railway's port
-    app.run(host='0.0.0.0', port=port)
+    host = os.environ.get('HOST', '0.0.0.0')
+    app.run(host=host, port=port)
