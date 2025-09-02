@@ -138,6 +138,9 @@ In the browser interface, type your message into the text box or use the voice b
 You can choose from any system speech synthesis voice using the **Voice** drop-down next to the Speak button.
 You can also click **Summarize Memory** to get a short summary of all remembered facts.
 
+### Adding External APIs
+Use the **API endpoint** field in the interface to submit URLs. Hecate records each entry in `scripts/apis.txt` for later use within its system scripts.
+
 ### API Key Insertion
 Hecate requires an OpenAI API key before it can talk to ChatGPT. You can provide the key in either of the following ways:
 

@@ -53,6 +53,16 @@ def talk_audio():
     response = hecate.respond(text)
     return jsonify({"transcript": text, "reply": response})
 
+
+@app.route("/add_api", methods=["POST"])
+def add_api():
+    data = request.json
+    api_url = data.get("api", "")
+    if not api_url:
+        return jsonify({"status": "missing api"}), 400
+    message = hecate.add_api(api_url)
+    return jsonify({"status": message})
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Hecate API server")
     parser.add_argument(

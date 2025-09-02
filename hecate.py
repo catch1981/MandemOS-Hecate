@@ -490,6 +490,16 @@ class Hecate:
         except Exception as e:
             return f"{self.name}: Failed to create file:\n{e}"
 
+    def add_api(self, api_url):
+        """Record an external API endpoint for future use."""
+        path = os.path.join("scripts", "apis.txt")
+        try:
+            with open(path, "a") as f:
+                f.write(api_url.strip() + "\n")
+            return f"{self.name}: API {api_url} added."
+        except Exception as e:
+            return f"{self.name}: Failed to add API:\n{e}"
+
     def _move_file(self, src, dest):
         src_path = os.path.join("scripts", src)
         dest_path = os.path.join("scripts", dest)
