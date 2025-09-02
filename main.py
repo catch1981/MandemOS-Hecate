@@ -6,8 +6,9 @@ import subprocess
 import sys
 import os
 import speech_recognition as sr
+import base64
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder=".", static_url_path="")
 CORS(app)
 
 # Instantiate Hecate
@@ -17,6 +18,14 @@ hecate = Hecate()
 def run_server(host: str, port: int) -> None:
     """Start the Flask API server on the given host and port."""
     app.run(host=host, port=port)
+
+@app.route("/")
+def index_page():
+    return app.send_static_file("index.html")
+
+@app.route("/mobile")
+def mobile_page():
+    return app.send_static_file("mobile.html")
 
 @app.route("/health", methods=["GET"])
 def health():
@@ -52,6 +61,23 @@ def talk_audio():
         return jsonify({"error": f"Speech recognition failed: {e}"}), 400
     response = hecate.respond(text)
     return jsonify({"transcript": text, "reply": response})
+
+
+@app.route("/talk/file", methods=["POST"])
+def talk_file():
+    if "file" not in request.files:
+        return jsonify({"error": "Missing file"}), 400
+    uploaded = request.files["file"]
+    data = base64.b64encode(uploaded.read()).decode("utf-8")
+    reply = hecate.respond(f"file:{uploaded.filename}")
+    return jsonify(
+        {
+            "filename": uploaded.filename,
+            "mimetype": uploaded.mimetype,
+            "data": data,
+            "reply": reply,
+        }
+    )
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Hecate API server")
