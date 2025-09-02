@@ -6,3 +6,4 @@ beautifulsoup4
 SpeechRecognition
 psutil
 firebase-admin
+pyngrok
