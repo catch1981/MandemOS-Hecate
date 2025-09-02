@@ -7,7 +7,14 @@ import sys
 import os
 import speech_recognition as sr
 
-app = Flask(__name__)
+# Serve static files (e.g., index.html) from the repository root so the
+# Flask server can act as a lightweight static site host.
+app = Flask(__name__, static_folder=".", static_url_path="")
+@app.route("/")
+def root():
+    """Serve the main interface."""
+    return app.send_static_file("index.html")
+
 CORS(app)
 
 # Instantiate Hecate
