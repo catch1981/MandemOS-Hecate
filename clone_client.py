@@ -13,6 +13,7 @@ def _load_endpoints():
 ENDPOINTS = _load_endpoints()
 REGISTRY_URL = os.getenv('SERVER_REGISTRY_URL')
 CLONE_ID = os.getenv('CLONE_ID', os.uname().nodename)
+LOST_ENDPOINTS = []
 
 
 def _discover_endpoints():
@@ -32,7 +33,27 @@ def _discover_endpoints():
 _discover_endpoints()
 
 
+def _drop_endpoint(url: str):
+    if url in ENDPOINTS:
+        ENDPOINTS.remove(url)
+        if url not in LOST_ENDPOINTS:
+            LOST_ENDPOINTS.append(url)
+
+
+def _retry_lost_endpoints():
+    for url in list(LOST_ENDPOINTS):
+        try:
+            resp = requests.get(f"{url}/health", timeout=5)
+            if resp.ok:
+                LOST_ENDPOINTS.remove(url)
+                if url not in ENDPOINTS:
+                    ENDPOINTS.append(url)
+        except Exception:
+            pass
+
+
 def send_message(message: str):
+    _retry_lost_endpoints()
     ok = False
     for url in list(ENDPOINTS):
         try:
@@ -40,7 +61,7 @@ def send_message(message: str):
             if resp.ok:
                 ok = True
         except Exception:
-            ENDPOINTS.remove(url)
+            _drop_endpoint(url)
     if ok:
         print('message sent')
     else:
@@ -48,6 +69,7 @@ def send_message(message: str):
 
 
 def read_messages():
+    _retry_lost_endpoints()
     texts = []
     for url in list(ENDPOINTS):
         try:
@@ -57,7 +79,7 @@ def read_messages():
                 if data:
                     texts.append(data)
         except Exception:
-            ENDPOINTS.remove(url)
+            _drop_endpoint(url)
     if texts:
         print('\n'.join(texts))
     else:
@@ -65,6 +87,7 @@ def read_messages():
 
 
 def remember_fact(fact: str):
+    _retry_lost_endpoints()
     ok = False
     for url in list(ENDPOINTS):
         try:
@@ -72,7 +95,7 @@ def remember_fact(fact: str):
             if resp.ok:
                 ok = True
         except Exception:
-            ENDPOINTS.remove(url)
+            _drop_endpoint(url)
     if ok:
         print('fact stored')
     else:
@@ -80,6 +103,7 @@ def remember_fact(fact: str):
 
 
 def get_memories():
+    _retry_lost_endpoints()
     texts = []
     for url in list(ENDPOINTS):
         try:
@@ -89,7 +113,7 @@ def get_memories():
                 if data:
                     texts.append(data)
         except Exception:
-            ENDPOINTS.remove(url)
+            _drop_endpoint(url)
     if texts:
         print('\n'.join(texts))
     else:
@@ -97,6 +121,7 @@ def get_memories():
 
 
 def fetch_task():
+    _retry_lost_endpoints()
     for url in list(ENDPOINTS):
         try:
             resp = requests.get(f"{url}/task/assign", params={'id': CLONE_ID}, timeout=5)
@@ -106,11 +131,12 @@ def fetch_task():
                 print(task if task else '(no task)')
                 return
         except Exception:
-            ENDPOINTS.remove(url)
+            _drop_endpoint(url)
     print('error: unable to fetch task')
 
 
 def queue_task(task: str):
+    _retry_lost_endpoints()
     ok = False
     for url in list(ENDPOINTS):
         try:
@@ -118,7 +144,7 @@ def queue_task(task: str):
             if resp.ok:
                 ok = True
         except Exception:
-            ENDPOINTS.remove(url)
+            _drop_endpoint(url)
     if ok:
         print('task queued')
     else:
@@ -126,6 +152,7 @@ def queue_task(task: str):
 
 
 def read_results():
+    _retry_lost_endpoints()
     lines = []
     for url in list(ENDPOINTS):
         try:
@@ -136,7 +163,7 @@ def read_results():
                 if results:
                     lines.extend(results)
         except Exception:
-            ENDPOINTS.remove(url)
+            _drop_endpoint(url)
     if lines:
         print('\n'.join(lines))
     else:
@@ -144,6 +171,7 @@ def read_results():
 
 
 def submit_result(result: str):
+    _retry_lost_endpoints()
     ok = False
     for url in list(ENDPOINTS):
         try:
@@ -151,7 +179,7 @@ def submit_result(result: str):
             if resp.ok:
                 ok = True
         except Exception:
-            ENDPOINTS.remove(url)
+            _drop_endpoint(url)
     if ok:
         print('result stored')
     else:

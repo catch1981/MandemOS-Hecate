@@ -47,6 +47,7 @@ SERVER_ENDPOINTS = _load_endpoints()
 REGISTRY_URL = os.getenv("SERVER_REGISTRY_URL")
 CLONE_PUBLIC_URL = os.getenv("CLONE_PUBLIC_URL")
 SYNC_INTERVAL = float(os.getenv("SERVER_SYNC_INTERVAL", "10"))
+LOST_ENDPOINTS = []
 
 
 def _setup_public_url():
@@ -135,6 +136,8 @@ def _broadcast(path, payload):
         except Exception:
             if url in SERVER_ENDPOINTS:
                 SERVER_ENDPOINTS.remove(url)
+                if url not in LOST_ENDPOINTS:
+                    LOST_ENDPOINTS.append(url)
 
 
 def _sync_from_servers():
@@ -164,11 +167,27 @@ def _sync_from_servers():
         except Exception:
             if url in SERVER_ENDPOINTS:
                 SERVER_ENDPOINTS.remove(url)
+                if url not in LOST_ENDPOINTS:
+                    LOST_ENDPOINTS.append(url)
+
+
+def _retry_lost_endpoints():
+    """Attempt to reconnect to previously unreachable endpoints."""
+    for url in list(LOST_ENDPOINTS):
+        try:
+            resp = requests.get(f"{url}/health", timeout=5)
+            if resp.ok:
+                LOST_ENDPOINTS.remove(url)
+                if url not in SERVER_ENDPOINTS:
+                    SERVER_ENDPOINTS.append(url)
+        except Exception:
+            pass
 
 
 def _sync_loop():
     while True:
         _discover_endpoints()
+        _retry_lost_endpoints()
         _sync_from_servers()
         time.sleep(SYNC_INTERVAL)
 
