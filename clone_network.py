@@ -44,7 +44,37 @@ def _load_endpoints():
 
 
 SERVER_ENDPOINTS = _load_endpoints()
+REGISTRY_URL = os.getenv("SERVER_REGISTRY_URL")
+CLONE_PUBLIC_URL = os.getenv("CLONE_PUBLIC_URL")
 SYNC_INTERVAL = float(os.getenv("SERVER_SYNC_INTERVAL", "10"))
+
+
+def _discover_endpoints():
+    """Register with the central registry and pull the latest peer list."""
+    if not REGISTRY_URL:
+        return
+    try:
+        if CLONE_PUBLIC_URL:
+            try:
+                requests.post(
+                    f"{REGISTRY_URL}/register",
+                    json={"url": CLONE_PUBLIC_URL},
+                    timeout=5,
+                )
+            except Exception:
+                pass
+        resp = requests.get(f"{REGISTRY_URL}/list", timeout=5)
+        if resp.ok:
+            data = resp.json()
+            for url in data.get("servers", []):
+                if url != CLONE_PUBLIC_URL and url not in SERVER_ENDPOINTS:
+                    SERVER_ENDPOINTS.append(url)
+    except Exception:
+        pass
+
+
+if REGISTRY_URL:
+    _discover_endpoints()
 
 
 def _load_lines(path):
@@ -108,6 +138,7 @@ def _sync_from_servers():
 
 def _sync_loop():
     while True:
+        _discover_endpoints()
         _sync_from_servers()
         time.sleep(SYNC_INTERVAL)
 
@@ -251,7 +282,7 @@ def all_updates():
     })
 
 if __name__ == '__main__':
-    if SERVER_ENDPOINTS:
+    if SERVER_ENDPOINTS or REGISTRY_URL:
         threading.Thread(target=_sync_loop, daemon=True).start()
     port = int(os.getenv('CLONE_PORT', '5000'))
     app.run(host='0.0.0.0', port=port)
