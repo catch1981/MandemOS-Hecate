@@ -7,11 +7,19 @@ import sys
 import os
 import speech_recognition as sr
 
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
 app = Flask(__name__)
 CORS(app)
 
 # Instantiate Hecate
 hecate = Hecate()
+
+
+@app.route("/")
+def home():
+    """Simple status endpoint to confirm the server is running."""
+    return jsonify({"message": "MandemOS Hecate online."})
 
 
 def run_server(host: str, port: int) -> None:
@@ -74,6 +82,8 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
+    os.chdir(script_dir)
+
     if args.background:
         # Relaunch this script detached from the current session
         cmd = [
@@ -86,6 +96,7 @@ if __name__ == "__main__":
         ]
         subprocess.Popen(
             cmd,
+            cwd=script_dir,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
             stdin=subprocess.DEVNULL,

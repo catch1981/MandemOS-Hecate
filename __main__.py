@@ -25,15 +25,17 @@ def main():
     )
     args = parser.parse_args()
 
-    current_dir = os.path.dirname(__file__)
-    script = os.path.join(current_dir, "OK workspaces", "main.py")
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    os.chdir(current_dir)
+    script = os.path.join(current_dir, "main.py")
 
     script_args = ["--host", args.host, "--port", str(args.port)]
 
     if args.background:
-        cmd = [sys.executable, script, "-b"] + script_args
+        cmd = [sys.executable, script] + script_args
         subprocess.Popen(
             cmd,
+            cwd=current_dir,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
             stdin=subprocess.DEVNULL,
@@ -43,19 +45,6 @@ def main():
     else:
         sys.argv = [script] + script_args
         runpy.run_path(script, run_name="__main__")
-
+    
 if __name__ == "__main__":
     main()
-import os
-from flask import Flask
-
-app = Flask(__name__)
-
-@app.route('/')
-def home():
-    return 'MandemOS Hecate online.'
-
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))  # 👈 uses Railway's port
-    host = os.environ.get('HOST', '0.0.0.0')
-    app.run(host=host, port=port)
