@@ -1,8 +1,10 @@
 
 function sendInput() {
-  const input = document.getElementById('userInput').value.trim();
+  const inputField = document.getElementById('userInput');
+  const input = inputField.value.trim();
   const output = document.getElementById('output');
   if (!input) return;
+  inputField.value = '';
 
   output.innerHTML += `<div><strong>You:</strong> ${input}</div>`;
   output.innerHTML += `<div><strong>Glitchborne:</strong> <span class="glitch">🧠 processing...</span></div>`;
