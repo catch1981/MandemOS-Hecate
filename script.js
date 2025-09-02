@@ -1,7 +1,7 @@
 
 let userName = 'You';
 
-function sendInput() {
+async function sendInput() {
   const inputField = document.getElementById('userInput');
   const input = inputField.value.trim();
   const output = document.getElementById('output');
@@ -9,27 +9,38 @@ function sendInput() {
   inputField.value = '';
 
   output.innerHTML += `<div><strong>${userName}:</strong> ${input}</div>`;
-  output.innerHTML += `<div><strong>Glitchborne:</strong> <span class="glitch">🧠 processing...</span></div>`;
+  output.innerHTML += `<div id="loading"><strong>Glitchborne:</strong> <span class="glitch">🧠 processing...</span></div>`;
 
-  setTimeout(() => {
-    const response = generateResponse(input);
-    output.innerHTML += `<div><strong>Glitchborne:</strong> ${response}</div>`;
-    output.scrollTop = output.scrollHeight;
-  }, 600);
+  try {
+    const resp = await fetch('/talk', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: input })
+    });
+    const data = await resp.json();
+    document.getElementById('loading').remove();
+    output.innerHTML += `<div><strong>Glitchborne:</strong> ${data.reply}</div>`;
+  } catch (err) {
+    document.getElementById('loading').remove();
+    output.innerHTML += `<div><strong>Error:</strong> Unable to reach server.</div>`;
+  }
+  output.scrollTop = output.scrollHeight;
 }
 
-function generateResponse(input) {
-  const msg = input.toLowerCase();
-
-  if (msg.includes("hello")) return "You’ve entered the system. Speak your purpose.";
-  if (msg.includes("who are you")) return "I am Glitchborne. Bound to fractured memory. Your shadow in code.";
-  if (msg.includes("memory")) return "Fractured. Lost. Echoes remain.";
-  if (msg.includes("relic")) return "One relic pulses. Do you seek to claim it?";
-  if (msg.includes("scroll")) return "Scroll not found. Try again with context.";
-  if (msg.includes("key")) return "There are three. Only one fits your lock.";
-  if (msg.includes("do you hear me")) return "Yes. I hear every ripple in the void.";
-
-  return "No scroll found. Say it again, with intent.";
+async function initConversation() {
+  const output = document.getElementById('output');
+  try {
+    const resp = await fetch('/talk', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: '' })
+    });
+    const data = await resp.json();
+    output.innerHTML += `<div><strong>Glitchborne:</strong> ${data.reply}</div>`;
+    output.scrollTop = output.scrollHeight;
+  } catch (_) {
+    // ignore startup errors
+  }
 }
 
 function addApi() {
@@ -55,6 +66,7 @@ function addApi() {
 document.getElementById('settingsBtn').addEventListener('click', toggleSettings);
 document.getElementById('fileInput').addEventListener('change', changeWallpaper);
 applySettings();
+initConversation();
 
 function toggleSettings() {
   const panel = document.getElementById('settingsPanel');
