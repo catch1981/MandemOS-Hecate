@@ -8,17 +8,18 @@
 ## an existing lockfile.
 
 [build]
-  # Install dependencies and then run the project's build script.
-  # The `--no-audit` and `--no-fund` flags prevent npm from performing
-  # time‑consuming security audits and funding checks during the build.
+  # For this project there is no compile step – it's a plain HTML/JS site.
+  # We still run `npm install` so that Netlify will generate a lockfile
+  # (required by `npm ci` if you later enable that) and to satisfy the
+  # build command requirement. The build script defined in package.json
+  # simply echoes a message and does nothing else.
   command = "npm install --no-audit --no-fund && npm run build"
 
-  # Publish directory: this should match the folder where your build
-  # outputs the production files. Adjust `dist` if your build outputs
-  # to another folder (e.g. `build`, `public`, etc.).
-  publish = "dist"
+  # The site files (index.html, script.js, style.css) live in the root
+  # of the repository. Set the publish directory to "." so Netlify
+  # serves these files directly.
+  publish = "."
 
 [build.environment]
-  # Specify the Node.js version to use during the build. Pin to 18.x
-  # so that Netlify uses an environment consistent with local development.
+  # Pin the Node.js version to match Netlify's default LTS version.
   NODE_VERSION = "18"
