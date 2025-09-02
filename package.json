@@ -1,5 +1,7 @@
 {
   "scripts": {
+    "start": "http-server .",
+    "build": "echo \"No build step\"",
     "test": "node --test"
   },
   "dependencies": {
