@@ -252,6 +252,19 @@ class Hecate:
         elif user_input.strip() == "clone:memories":
             return self._clone_memories()
 
+        elif user_input.startswith("extrapolate:"):
+            content = user_input.split("extrapolate:", 1)[1]
+            parts = [p.strip() for p in content.split("|")]
+            scenario = parts[0] if parts else ""
+            data = None
+            history = None
+            for p in parts[1:]:
+                if p.startswith("data:"):
+                    data = p.split("data:", 1)[1].strip()
+                elif p.startswith("history:"):
+                    history = p.split("history:", 1)[1].strip()
+            return self._extrapolate_outcomes(scenario, data, history)
+
         elif user_input.strip() == "lattice:show":
             return self.lattice.list_tasks()
 
@@ -393,6 +406,49 @@ class Hecate:
             return f"{self.name}: I've shared the key points."
         except Exception as e:
             return f"{self.name}: Failed to learn from text:\n{e}"
+
+    def _extrapolate_outcomes(self, scenario, data=None, history=None):
+        """Extrapolate outcomes and, when possible, gauge probabilities from history."""
+        if not scenario:
+            return f"{self.name}: No scenario provided to extrapolate."
+
+        results = []
+
+        if openai.api_key:
+            try:
+                prompt = (
+                    "Given the following scenario, list possible outcomes and eventualities in bullet points:"\
+                    f"\n{scenario}"
+                )
+                resp = openai.ChatCompletion.create(
+                    model=OPENAI_MODEL,
+                    messages=[{"role": "user", "content": prompt}],
+                )
+                results.append(resp.choices[0].message["content"].strip())
+            except Exception as e:
+                results.append(f"Failed to extrapolate outcomes:\n{e}")
+        else:
+            results.append("OpenAI API key not configured.")
+
+        if data and history:
+            ratios = self._compute_probability_ratios(data, history)
+            if ratios:
+                lines = [f"- {item}: {prob:.2%}" for item, prob in ratios.items()]
+                results.append("Historical probability ratios:\n" + "\n".join(lines))
+            else:
+                results.append("Historical probability ratios could not be computed.")
+
+        return f"{self.name}: " + "\n\n".join(results)
+
+    def _compute_probability_ratios(self, data, history):
+        """Compute probability ratios for outcomes based on historical data."""
+        data_items = [d.strip() for d in data.split(',') if d.strip()]
+        history_items = [h.strip() for h in history.split(',') if h.strip()]
+        if not data_items or not history_items:
+            return {}
+        total = len(history_items)
+        counts = {item: history_items.count(item) for item in data_items}
+        return {item: counts.get(item, 0) / total for item in data_items}
 
     def _save_code(self, filename):
         if not self.last_code:
