@@ -1,8 +1,9 @@
-flask
-requests
-openai
-flask-cors
 beautifulsoup4
-SpeechRecognition
-psutil
 firebase-admin
+flask
+flask-cors
+openai
+psutil
+pyngrok
+requests
+SpeechRecognition
