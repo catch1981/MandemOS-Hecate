@@ -4,6 +4,9 @@ body {
   color: #0ff;
   font-family: monospace;
   background-image: radial-gradient(ellipse at center, #000 0%, #111 100%);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   overflow: hidden;
 }
 #container {
