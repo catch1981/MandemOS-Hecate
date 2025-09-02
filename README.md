@@ -27,6 +27,8 @@ Use `remember:your fact` to store a memory and `recall` to read them back. The c
 Use `learn:some text` to extract key bullet points from the provided content and append them to memory.
 Use `clone:send:message` to broadcast a message to other running clones. They can read all messages with `clone:read`.
 Use `clone:remember:fact` to store a note in a shared memory file that all clones access. Retrieve the combined notes with `clone:memories`.
+Use `extrapolate:your scenario` to have Hecate outline possible outcomes and eventualities for the described situation. Append
+`|data:outcome1,outcome2|history:past1,past2` to gauge outcomes using historical probability ratios.
 To sync clones over a network, start `clone_network.py` on one machine and set the environment variable `CLONE_SERVER_URL` or `CLONE_ENDPOINTS` on each clone to point at one or more servers (comma separated). When defined, clone commands will use these endpoints instead of local files and automatically drop any that become unreachable. Servers can optionally replicate with peers listed in `SERVER_ENDPOINTS`. A small helper utility `clone_client.py` provides direct access to these features:
 
 ```bash
