@@ -74,6 +74,9 @@ for the API key in the `OPENAI_API_KEY` environment variable. If that isn't
 present, it will attempt to load a key from a file named `openai_key.txt` in the
 repository root.
 
+Hecate maintains a short conversation history so each reply can draw on recent
+context from the dialogue, producing more natural responses.
+
 To obtain an API key, sign up or log in at [OpenAI](https://platform.openai.com).
 Visit the **API keys** page of your account dashboard and create a new secret
 key. Copy that key and provide it either through the environment variable or the

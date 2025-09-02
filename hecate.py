@@ -65,6 +65,8 @@ class Hecate:
         self.admin_file = "admin_status.txt"
         self._load_admin_status()
         self.lattice = SelfImprovementLattice()
+        # store recent conversation turns for context-aware replies
+        self.conversation = []
 
     def startup_message(self):
         """Return the initial prompt asking for the user's identity."""
@@ -686,12 +688,22 @@ class Hecate:
     def _chatgpt_response(self, text):
         if not openai.api_key:
             return f"{self.name}: OpenAI API key not configured."
+        # add the latest user message to the running conversation
+        self.conversation.append({"role": "user", "content": text})
+        # keep only the last 20 messages to bound context size
+        convo = self.conversation[-20:]
+        messages = [{
+            "role": "system",
+            "content": f"You are {self.name}, {self.personality}."
+        }] + convo
         try:
             resp = openai.ChatCompletion.create(
                 model=OPENAI_MODEL,
-                messages=[{"role": "user", "content": text}]
+                messages=messages
             )
             answer = resp.choices[0].message["content"].strip()
+            # store assistant response for future context
+            self.conversation.append({"role": "assistant", "content": answer})
             return f"{self.name}: {answer}"
         except Exception as e:
             return f"{self.name}: Error contacting ChatGPT:\n{e}"
