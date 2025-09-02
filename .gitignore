@@ -2,3 +2,6 @@ __pycache__/
 openai_key.txt
 mandemos.db
 conversation.log
+
+node_modules/
+firebase_credentials.json
