@@ -5,3 +5,4 @@ conversation.log
 
 node_modules/
 firebase_credentials.json
+prevention.db
