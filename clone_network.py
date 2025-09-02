@@ -49,6 +49,33 @@ CLONE_PUBLIC_URL = os.getenv("CLONE_PUBLIC_URL")
 SYNC_INTERVAL = float(os.getenv("SERVER_SYNC_INTERVAL", "10"))
 
 
+def _setup_public_url():
+    """Populate CLONE_PUBLIC_URL using Tailscale or ngrok if requested."""
+    global CLONE_PUBLIC_URL
+    if CLONE_PUBLIC_URL:
+        return
+    port = os.getenv("CLONE_PORT", "5000")
+    if os.getenv("USE_TAILSCALE"):
+        try:
+            import subprocess
+            ip = subprocess.check_output(["tailscale", "ip", "-4"], text=True).strip()
+            CLONE_PUBLIC_URL = f"http://{ip}:{port}"
+            return
+        except Exception:
+            pass
+    if os.getenv("USE_NGROK"):
+        try:
+            from pyngrok import ngrok
+            tunnel = ngrok.connect(port)
+            CLONE_PUBLIC_URL = tunnel.public_url
+            return
+        except Exception:
+            pass
+
+
+_setup_public_url()
+
+
 def _discover_endpoints():
     """Register with the central registry and pull the latest peer list."""
     if not REGISTRY_URL:

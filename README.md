@@ -39,6 +39,12 @@ publish its reachable address via `CLONE_PUBLIC_URL` and will periodically
 retrieve the current list of peers from the registry so Hecate hydra heads can
 synchronize without manually specifying every endpoint.
 
+To reach peers behind NAT or firewalls, `clone_network.py` can optionally publish
+its own address automatically. Set `USE_TAILSCALE=1` to advertise the server's
+Tailscale IP or `USE_NGROK=1` to launch an ngrok tunnel. When either option is
+enabled, the script will set `CLONE_PUBLIC_URL` for you. ngrok support requires
+the `pyngrok` package and a valid `NGROK_AUTHTOKEN`.
+
 #### Firebase Memory Storage
 Provide a Firebase service account JSON file and set `FIREBASE_CRED_PATH` to its location to store memories in Firestore. When configured, Hecate mirrors remembered facts in a `memory` collection so they persist across sessions. Without credentials, it falls back to the local `memory.txt` file.
 
