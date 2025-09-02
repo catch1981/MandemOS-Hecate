@@ -47,3 +47,20 @@ function addApi() {
     });
   document.getElementById('apiInput').value = '';
 }
+
+document.getElementById('fileInput').addEventListener('change', changeWallpaper);
+
+function changeWallpaper() {
+  const file = this.files[0];
+  if (!file) return;
+  if (!file.type.startsWith('image/')) {
+    alert('Please select an image file.');
+    this.value = '';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    document.body.style.backgroundImage = `url('${e.target.result}')`;
+  };
+  reader.readAsDataURL(file);
+}
