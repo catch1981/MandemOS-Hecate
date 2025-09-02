@@ -11,8 +11,8 @@
   # Install npm dependencies and run the Hugo build script.
   command = "npm install --no-audit --no-fund && npm run build"
 
-  # Hugo outputs the generated site to the "public" directory.
-  publish = "public"
+  # Hugo outputs the generated site to the repository root.
+  publish = "."
 
 [build.environment]
   # Pin the Node.js version to match Netlify's default LTS version.
