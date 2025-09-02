@@ -33,6 +33,9 @@ To sync clones over a network, start `clone_network.py` on one machine and set t
 python clone_client.py --help
 ```
 
+#### Firebase Memory Storage
+Provide a Firebase service account JSON file and set `FIREBASE_CRED_PATH` to its location to store memories in Firestore. When configured, Hecate mirrors remembered facts in a `memory` collection so they persist across sessions. Without credentials, it falls back to the local `memory.txt` file.
+
 ### Sensitive Data Firewall
 `clone_network.py` now masks API keys and other tokens from shared messages and tasks. Set `FIREWALL_PATTERNS` with comma-separated regexes to customize what gets filtered.
 
