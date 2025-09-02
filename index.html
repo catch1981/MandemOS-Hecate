@@ -14,8 +14,14 @@
     <button onclick="sendInput()">Submit</button>
     <input type="text" id="apiInput" placeholder="API endpoint..."/>
     <button onclick="addApi()">Add API</button>
-    <label for="fileInput">Set wallpaper</label>
-    <input type="file" id="fileInput" accept="image/*" />
+    <button id="settingsBtn">Settings</button>
+    <div id="settingsPanel" style="display:none;">
+      <label>Username <input type="text" id="usernameInput" /></label>
+      <label>Text color <input type="color" id="textColorInput" /></label>
+      <label>Background color <input type="color" id="bgColorInput" /></label>
+      <label>Wallpaper <input type="file" id="fileInput" accept="image/*" /></label>
+      <button onclick="saveSettings()">Save</button>
+    </div>
   </div>
   <script src="script.js"></script>
 </body>
