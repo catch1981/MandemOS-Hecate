@@ -10,6 +10,13 @@ from email.mime.text import MIMEText
 import openai
 import subprocess
 from self_improvement_lattice import SelfImprovementLattice
+try:
+    import firebase_admin
+    from firebase_admin import credentials, firestore
+except Exception:  # pragma: no cover - firebase is optional
+    firebase_admin = None
+    credentials = None
+    firestore = None
 
 # Allow overriding the OpenAI model via environment variable. Default to gpt-4o
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o")
@@ -74,6 +81,17 @@ class Hecate:
         self.lattice = SelfImprovementLattice()
         # store recent conversation turns for context-aware replies
         self.conversation = []
+        # optional Firebase database for memory retention
+        self.firebase_db = None
+        cred_path = os.getenv("FIREBASE_CRED_PATH")
+        if firebase_admin and cred_path and os.path.exists(cred_path):
+            try:
+                cred = credentials.Certificate(cred_path)
+                if not firebase_admin._apps:
+                    firebase_admin.initialize_app(cred)
+                self.firebase_db = firestore.client()
+            except Exception:
+                self.firebase_db = None
 
     def startup_message(self):
         """Return the initial prompt asking for the user's identity."""
@@ -282,26 +300,47 @@ class Hecate:
         else:
             return self._chatgpt_response(user_input)
 
-    def _remember_fact(self, fact):
+    def _save_memory(self, fact):
+        """Persist a fact to local file and Firebase if available."""
+        if self.firebase_db:
+            try:
+                self.firebase_db.collection("memory").add({"fact": fact})
+            except Exception:
+                pass
         with open(self.memory_file, "a") as f:
             f.write(fact + "\n")
+
+    def _load_memories(self):
+        """Load all remembered facts from Firebase or local file."""
+        facts = []
+        if self.firebase_db:
+            try:
+                docs = self.firebase_db.collection("memory").stream()
+                facts = [d.to_dict().get("fact", "") for d in docs]
+            except Exception:
+                facts = []
+        if not facts and os.path.exists(self.memory_file):
+            with open(self.memory_file, "r") as f:
+                facts = [line.strip() for line in f if line.strip()]
+        return facts
+
+    def _remember_fact(self, fact):
+        self._save_memory(fact)
         return f"{self.name}: Got it. I’ll remember that."
 
     def _recall_facts(self):
-        if not os.path.exists(self.memory_file):
+        facts = self._load_memories()
+        if not facts:
             return f"{self.name}: I don’t have any memories yet."
-        with open(self.memory_file, "r") as f:
-            facts = f.read().strip()
-        return f"{self.name}: Here's what I remember:\n{facts if facts else '(empty)'}"
+        joined = "\n".join(facts)
+        return f"{self.name}: Here's what I remember:\n{joined}"
 
     def _summarize_memory(self):
         """Return a short summary of remembered facts using ChatGPT."""
-        if not os.path.exists(self.memory_file):
+        facts_list = self._load_memories()
+        if not facts_list:
             return f"{self.name}: I don’t have any memories yet."
-        with open(self.memory_file, "r") as f:
-            facts = f.read().strip()
-        if not facts:
-            return f"{self.name}: Memory file is empty."
+        facts = "\n".join(facts_list)
         try:
             prompt = (
                 "Summarize the following notes in a concise paragraph:"\
@@ -330,8 +369,7 @@ class Hecate:
                 messages=[{"role": "user", "content": prompt}],
             )
             summary = resp.choices[0].message["content"].strip()
-            with open(self.memory_file, "a") as f:
-                f.write(summary + "\n")
+            self._save_memory(summary)
             return f"{self.name}: I've noted the key points."
         except Exception as e:
             return f"{self.name}: Failed to learn from text:\n{e}"
