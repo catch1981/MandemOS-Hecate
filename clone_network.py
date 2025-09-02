@@ -1,4 +1,7 @@
 import os
+import threading
+import time
+import requests
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from firewall import sanitize_text
@@ -33,6 +36,17 @@ TASKS_FILE = "tasks.log"
 RESULTS_FILE = "task_results.log"
 
 
+def _load_endpoints():
+    env = os.getenv("SERVER_ENDPOINTS")
+    if env:
+        return [u.strip() for u in env.split(',') if u.strip()]
+    return []
+
+
+SERVER_ENDPOINTS = _load_endpoints()
+SYNC_INTERVAL = float(os.getenv("SERVER_SYNC_INTERVAL", "10"))
+
+
 def _load_lines(path):
     """Return list of non-empty lines from a file."""
     if os.path.exists(path):
@@ -51,6 +65,41 @@ def _append_line(path, line):
             f.write(line + "\n")
     except Exception:
         pass
+
+
+def _sync_from_servers():
+    """Merge updates from peer servers and drop unreachable ones."""
+    for url in list(SERVER_ENDPOINTS):
+        try:
+            resp = requests.get(f"{url}/updates", timeout=5)
+            if not resp.ok:
+                continue
+            data = resp.json()
+            for entry in data.get('messages', []):
+                if entry not in messages:
+                    messages.append(entry)
+                    _append_line(MESSAGES_FILE, entry)
+            for entry in data.get('memories', []):
+                if entry not in memories:
+                    memories.append(entry)
+                    _append_line(MEMORIES_FILE, entry)
+            for entry in data.get('tasks', []):
+                if entry not in tasks:
+                    tasks.append(entry)
+                    _append_line(TASKS_FILE, entry)
+            for entry in data.get('results', []):
+                if entry not in results:
+                    results.append(entry)
+                    _append_line(RESULTS_FILE, entry)
+        except Exception:
+            if url in SERVER_ENDPOINTS:
+                SERVER_ENDPOINTS.remove(url)
+
+
+def _sync_loop():
+    while True:
+        _sync_from_servers()
+        time.sleep(SYNC_INTERVAL)
 
 
 def _update_keyword_stats(clone_id, text):
@@ -184,5 +233,7 @@ def all_updates():
     })
 
 if __name__ == '__main__':
+    if SERVER_ENDPOINTS:
+        threading.Thread(target=_sync_loop, daemon=True).start()
     port = int(os.getenv('CLONE_PORT', '5000'))
     app.run(host='0.0.0.0', port=port)

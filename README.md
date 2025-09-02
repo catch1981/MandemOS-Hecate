@@ -27,7 +27,7 @@ Use `remember:your fact` to store a memory and `recall` to read them back. The c
 Use `learn:some text` to extract key bullet points from the provided content and append them to memory.
 Use `clone:send:message` to broadcast a message to other running clones. They can read all messages with `clone:read`.
 Use `clone:remember:fact` to store a note in a shared memory file that all clones access. Retrieve the combined notes with `clone:memories`.
-To sync clones over a network, start `clone_network.py` on one machine and set the environment variable `CLONE_SERVER_URL` on each clone to point at that server (e.g. `http://host:5000`). When defined, clone commands will use the server instead of local files. A small helper utility `clone_client.py` provides direct access to these features:
+To sync clones over a network, start `clone_network.py` on one machine and set the environment variable `CLONE_SERVER_URL` or `CLONE_ENDPOINTS` on each clone to point at one or more servers (comma separated). When defined, clone commands will use these endpoints instead of local files and automatically drop any that become unreachable. Servers can optionally replicate with peers listed in `SERVER_ENDPOINTS`. A small helper utility `clone_client.py` provides direct access to these features:
 
 ```bash
 python clone_client.py --help
@@ -43,10 +43,11 @@ You can pool spare CPU cycles from multiple machines using the clone network.
    ```bash
    python clone_network.py
    ```
+   You can provide a comma-separated list of other servers in `SERVER_ENDPOINTS` to enable automatic replication.
 
 2. **Launch workers** on every machine that should contribute compute power:
    ```bash
-   export CLONE_SERVER_URL=http://<server-host>:5000
+   export CLONE_ENDPOINTS=http://<server-host>:5000
    python excess_compute.py
    ```
    Workers only fetch tasks when their average CPU usage is below the

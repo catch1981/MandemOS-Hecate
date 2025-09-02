@@ -44,6 +44,13 @@ class Hecate:
         self.shared_memory_file = "shared_memory.txt"
         self.clone_id = os.getenv("CLONE_ID", os.uname().nodename)
         self.clone_server = os.getenv("CLONE_SERVER_URL")
+        endpoints = os.getenv("CLONE_ENDPOINTS")
+        if endpoints:
+            self.clone_endpoints = [e.strip() for e in endpoints.split(',') if e.strip()]
+        elif self.clone_server:
+            self.clone_endpoints = [self.clone_server]
+        else:
+            self.clone_endpoints = []
         self.last_code = ""
         self.gmail_user = os.getenv("GMAIL_USER")
         self.gmail_pass = os.getenv("GMAIL_PASS")
@@ -174,6 +181,12 @@ class Hecate:
         elif user_input.startswith("selfimprove:"):
             desc = user_input.split("selfimprove:", 1)[1].strip()
             return self._self_improve(desc)
+
+        elif user_input.strip() == "update:deps":
+            return self._update_dependencies()
+
+        elif user_input.strip() == "update:repo":
+            return self._update_repo()
 
         elif user_input.startswith("email:"):
             try:
@@ -533,6 +546,27 @@ class Hecate:
         except Exception as e:
             return f"{self.name}: Failed to improve myself:\n{e}"
 
+    def _update_dependencies(self):
+        """Install or upgrade required Python packages."""
+        try:
+            subprocess.check_call(
+                [sys.executable, "-m", "pip", "install", "--upgrade", "-r", "requirements.txt"]
+            )
+            return f"{self.name}: Dependencies updated."
+        except Exception as e:
+            return f"{self.name}: Failed to update dependencies:\n{e}"
+
+    def _update_repo(self):
+        """Pull the latest changes from the git repository."""
+        try:
+            remotes = subprocess.check_output(["git", "remote"]).decode().split()
+            if not remotes:
+                return f"{self.name}: No git remote configured."
+            subprocess.check_call(["git", "pull"])
+            return f"{self.name}: Repository updated."
+        except Exception as e:
+            return f"{self.name}: Failed to update repository:\n{e}"
+
     def _send_email(self, to_addr, subject, body):
         if not (self.gmail_user and self.gmail_pass):
             return f"{self.name}: Gmail credentials not configured."
@@ -575,17 +609,20 @@ class Hecate:
             return f"{self.name}: Failed to fetch emails:\n{e}"
 
     def _clone_send(self, message):
-        if self.clone_server:
+        sent = False
+        for url in list(self.clone_endpoints):
             try:
                 resp = requests.post(
-                    f"{self.clone_server}/send",
+                    f"{url}/send",
                     json={"id": self.clone_id, "message": message},
                     timeout=5,
                 )
                 if resp.ok:
-                    return f"{self.name}: Message broadcast."
+                    sent = True
             except Exception:
-                pass
+                self.clone_endpoints.remove(url)
+        if sent:
+            return f"{self.name}: Message broadcast."
         try:
             with open(self.clone_log_file, "a") as f:
                 f.write(f"{self.clone_id}: {message}\n")
@@ -594,14 +631,18 @@ class Hecate:
             return f"{self.name}: Failed to send message:\n{e}"
 
     def _clone_read(self):
-        if self.clone_server:
+        parts = []
+        for url in list(self.clone_endpoints):
             try:
-                resp = requests.get(f"{self.clone_server}/read", timeout=5)
+                resp = requests.get(f"{url}/read", timeout=5)
                 if resp.ok:
-                    data = resp.text.strip()
-                    return data if data else f"{self.name}: (no messages)"
+                    text = resp.text.strip()
+                    if text:
+                        parts.append(text)
             except Exception:
-                pass
+                self.clone_endpoints.remove(url)
+        if parts:
+            return "\n".join(parts)
         if not os.path.exists(self.clone_log_file):
             return f"{self.name}: No messages."
         with open(self.clone_log_file, "r") as f:
@@ -609,17 +650,20 @@ class Hecate:
         return data if data else f"{self.name}: (no messages)"
 
     def _clone_remember(self, fact):
-        if self.clone_server:
+        stored = False
+        for url in list(self.clone_endpoints):
             try:
                 resp = requests.post(
-                    f"{self.clone_server}/remember",
+                    f"{url}/remember",
                     json={"id": self.clone_id, "fact": fact},
                     timeout=5,
                 )
                 if resp.ok:
-                    return f"{self.name}: Shared memory stored."
+                    stored = True
             except Exception:
-                pass
+                self.clone_endpoints.remove(url)
+        if stored:
+            return f"{self.name}: Shared memory stored."
         try:
             with open(self.shared_memory_file, "a") as f:
                 f.write(f"{self.clone_id}: {fact}\n")
@@ -628,14 +672,18 @@ class Hecate:
             return f"{self.name}: Failed to store memory:\n{e}"
 
     def _clone_memories(self):
-        if self.clone_server:
+        parts = []
+        for url in list(self.clone_endpoints):
             try:
-                resp = requests.get(f"{self.clone_server}/memories", timeout=5)
+                resp = requests.get(f"{url}/memories", timeout=5)
                 if resp.ok:
-                    data = resp.text.strip()
-                    return data if data else f"{self.name}: (no memories)"
+                    text = resp.text.strip()
+                    if text:
+                        parts.append(text)
             except Exception:
-                pass
+                self.clone_endpoints.remove(url)
+        if parts:
+            return "\n".join(parts)
         if not os.path.exists(self.shared_memory_file):
             return f"{self.name}: No shared memories."
         with open(self.shared_memory_file, "r") as f:
