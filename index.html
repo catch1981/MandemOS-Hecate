@@ -9,9 +9,11 @@
 <body>
   <div id="container">
     <h1>👁️ MandemOS: Glitchborne Interface</h1>
-    <div id="output"></div>
-    <input type="text" id="userInput" placeholder="Speak your command..."/>
-    <button onclick="sendInput()">Submit</button>
+    <div id="chat"></div>
+    <div id="inputBar">
+      <input type="text" id="userInput" placeholder="Type a message..." />
+      <button id="sendButton">Send</button>
+    </div>
     <input type="file" id="fileInput" />
   </div>
   <script src="script.js"></script>

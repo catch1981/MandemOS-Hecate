@@ -1,29 +1,57 @@
+let chat;
+let inputBox;
+let sendButton;
 
-function sendInput() {
-  const input = document.getElementById('userInput').value.trim();
-  const output = document.getElementById('output');
-  if (!input) return;
-
-  output.innerHTML += `<div><strong>You:</strong> ${input}</div>`;
-  output.innerHTML += `<div><strong>Glitchborne:</strong> <span class="glitch">🧠 processing...</span></div>`;
-
-  setTimeout(() => {
-    const response = generateResponse(input);
-    output.innerHTML += `<div><strong>Glitchborne:</strong> ${response}</div>`;
-    output.scrollTop = output.scrollHeight;
-  }, 600);
+function appendMessage(text, className) {
+  const div = document.createElement('div');
+  div.className = `message ${className}`;
+  div.textContent = text;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
 }
 
-function generateResponse(input) {
-  const msg = input.toLowerCase();
+// Resolve the backend API base URL. When viewing the page directly from disk
+// use the local server URL, otherwise default to the current origin so it
+// works when hosted from the same domain.
+const API_BASE = location.protocol === 'file:'
+  ? 'http://localhost:8080'
+  : location.origin;
 
-  if (msg.includes("hello")) return "You’ve entered the system. Speak your purpose.";
-  if (msg.includes("who are you")) return "I am Glitchborne. Bound to fractured memory. Your shadow in code.";
-  if (msg.includes("memory")) return "Fractured. Lost. Echoes remain.";
-  if (msg.includes("relic")) return "One relic pulses. Do you seek to claim it?";
-  if (msg.includes("scroll")) return "Scroll not found. Try again with context.";
-  if (msg.includes("key")) return "There are three. Only one fits your lock.";
-  if (msg.includes("do you hear me")) return "Yes. I hear every ripple in the void.";
+async function sendInput() {
+  const msg = inputBox.value.trim();
+  if (!msg) return;
+  appendMessage(msg, 'user');
+  inputBox.value = '';
+  inputBox.focus();
+  try {
+    const res = await fetch(`${API_BASE}/talk`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg })
+    });
+    const data = await res.json();
+    appendMessage(data.reply, 'bot');
+  } catch (e) {
+    appendMessage('Error: could not reach server.', 'bot');
+  }
+}
 
-  return "No scroll found. Say it again, with intent.";
+function attachEvents() {
+  chat = document.getElementById('chat');
+  inputBox = document.getElementById('userInput');
+  sendButton = document.getElementById('sendButton');
+
+  sendButton.addEventListener('click', sendInput);
+  inputBox.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      sendInput();
+    }
+  });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', attachEvents);
+} else {
+  attachEvents();
 }

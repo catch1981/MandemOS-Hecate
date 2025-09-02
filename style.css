@@ -13,19 +13,53 @@ body {
   border: 1px solid #0ff;
   background: rgba(0, 0, 0, 0.9);
 }
-input, button {
-  display: block;
-  margin-top: 10px;
-  width: 100%;
+
+#chat {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px dashed #0ff;
+  background-color: rgba(0, 0, 0, 0.5);
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+#inputBar {
+  display: flex;
+  gap: 10px;
+}
+
+input[type="text"] {
+  flex: 1;
   background: black;
   color: #0ff;
   border: 1px solid #0ff;
   padding: 8px;
 }
-#output {
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px dashed #0ff;
-  min-height: 100px;
-  background-color: rgba(0,0,0,0.5);
+
+button {
+  background: black;
+  color: #0ff;
+  border: 1px solid #0ff;
+  padding: 8px 16px;
+}
+
+.message {
+  padding: 8px 12px;
+  border-radius: 6px;
+  max-width: 80%;
+}
+
+.message.user {
+  align-self: flex-end;
+  background-color: #005;
+  color: #0ff;
+}
+
+.message.bot {
+  align-self: flex-start;
+  background-color: #222;
+  color: #0ff;
 }
