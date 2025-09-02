@@ -9,8 +9,27 @@ def _load_endpoints():
     url = os.getenv('CLONE_SERVER_URL', 'http://localhost:5000')
     return [url]
 
+
 ENDPOINTS = _load_endpoints()
+REGISTRY_URL = os.getenv('SERVER_REGISTRY_URL')
 CLONE_ID = os.getenv('CLONE_ID', os.uname().nodename)
+
+
+def _discover_endpoints():
+    if not REGISTRY_URL:
+        return
+    try:
+        resp = requests.get(f"{REGISTRY_URL}/list", timeout=5)
+        if resp.ok:
+            data = resp.json()
+            for url in data.get('servers', []):
+                if url not in ENDPOINTS:
+                    ENDPOINTS.append(url)
+    except Exception:
+        pass
+
+
+_discover_endpoints()
 
 
 def send_message(message: str):

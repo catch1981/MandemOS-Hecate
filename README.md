@@ -33,6 +33,12 @@ To sync clones over a network, start `clone_network.py` on one machine and set t
 python clone_client.py --help
 ```
 
+For automatic peer discovery across the public internet, run a lightweight
+registry service and provide its URL in `SERVER_REGISTRY_URL`. Each clone can
+publish its reachable address via `CLONE_PUBLIC_URL` and will periodically
+retrieve the current list of peers from the registry so Hecate hydra heads can
+synchronize without manually specifying every endpoint.
+
 #### Firebase Memory Storage
 Provide a Firebase service account JSON file and set `FIREBASE_CRED_PATH` to its location to store memories in Firestore. When configured, Hecate mirrors remembered facts in a `memory` collection so they persist across sessions. Without credentials, it falls back to the local `memory.txt` file.
 
