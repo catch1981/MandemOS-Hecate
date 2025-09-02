@@ -29,3 +29,20 @@ input, button {
   min-height: 100px;
   background-color: rgba(0,0,0,0.5);
 }
+#output img {
+  max-width: 100%;
+  display: block;
+  margin-top: 10px;
+}
+#output a {
+  color: #0ff;
+}
+@media (max-width: 600px) {
+  #container {
+    margin: 20px auto;
+    width: auto;
+  }
+  input, button {
+    font-size: 16px;
+  }
+}
