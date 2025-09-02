@@ -10,7 +10,15 @@ Colby Atcheson is the server administrator. Update `server_admins.json` to grant
 Use `admin:<password>` to gain admin privileges. Check status with `admin:status` and revoke with `admin:logout`. The default password is `whostheboss` or can be overridden with the `ADMIN_PASSWORD` environment variable.
 
 ### Usage
-1. Create a `config.json` file with your GitHub token and remote URL:
+1. Provide your GitHub token and remote URL using environment variables or a `config.json` file:
+
+   **Environment variables**
+   ```bash
+   export GITHUB_TOKEN=YOUR_GITHUB_TOKEN
+   export GITHUB_REMOTE=https://github.com/username/repo.git
+   ```
+
+   **OR** create a `config.json` file:
    ```json
    {
      "token": "YOUR_GITHUB_TOKEN",
@@ -18,7 +26,21 @@ Use `admin:<password>` to gain admin privileges. Check status with `admin:status
    }
    ```
 2. Run `node hecate-auto.js`
-3. It will pull the latest changes and then commit and push code to your repo automatically
+3. It will pull the latest changes and then commit and push code to your repo automatically. If the pull results in conflicts, the script will stop so you can resolve them manually.
+   To let the script resolve conflicts for you, set `GIT_AUTOMERGE` to `ours` or
+   `theirs` and it will retry the merge using that strategy.
+
+The script verifies your token with the GitHub API before pushing so you know
+your credentials are valid.
+
+### Tests
+Run the unit tests with:
+
+```bash
+npm test
+```
+
+These tests confirm basic functionality such as GitHub API authentication.
 
 This is the base of a fully interactive coding bot. Expand with AI core or Discord input.
 
