@@ -67,6 +67,16 @@ def _append_line(path, line):
         pass
 
 
+def _broadcast(path, payload):
+    """Send a POST request with payload to all known endpoints."""
+    for url in list(SERVER_ENDPOINTS):
+        try:
+            requests.post(f"{url}{path}?forwarded=1", json=payload, timeout=5)
+        except Exception:
+            if url in SERVER_ENDPOINTS:
+                SERVER_ENDPOINTS.remove(url)
+
+
 def _sync_from_servers():
     """Merge updates from peer servers and drop unreachable ones."""
     for url in list(SERVER_ENDPOINTS):
@@ -159,6 +169,8 @@ def send_message():
         messages.append(entry)
         _append_line(MESSAGES_FILE, entry)
         _update_keyword_stats(clone_id, msg)
+        if not request.args.get('forwarded'):
+            _broadcast('/send', {'id': clone_id, 'message': msg})
         return jsonify({'status': 'ok'})
     return jsonify({'error': 'missing message'}), 400
 
@@ -177,6 +189,8 @@ def remember_fact():
         memories.append(entry)
         _append_line(MEMORIES_FILE, entry)
         _update_keyword_stats(clone_id, fact)
+        if not request.args.get('forwarded'):
+            _broadcast('/remember', {'id': clone_id, 'fact': fact})
         return jsonify({'status': 'ok'})
     return jsonify({'error': 'missing fact'}), 400
 
@@ -198,6 +212,8 @@ def add_task():
         task = sanitize_text(task)
         tasks.append(task)
         _append_line(TASKS_FILE, task)
+        if not request.args.get('forwarded'):
+            _broadcast('/task', {'task': task})
         return jsonify({'status': 'queued'})
     return jsonify({'error': 'missing task'}), 400
 
@@ -218,6 +234,8 @@ def store_result():
         entry = f"{clone_id}: {result}"
         results.append(entry)
         _append_line(RESULTS_FILE, entry)
+        if not request.args.get('forwarded'):
+            _broadcast('/task/result', {'id': clone_id, 'result': result})
         return jsonify({'status': 'stored'})
     return jsonify({'error': 'missing result'}), 400
 
