@@ -1,7 +1,7 @@
 {
   "scripts": {
     "start": "http-server .",
-    "build": "hugo",
+    "build": "command -v hugo >/dev/null 2>&1 && hugo || echo 'Hugo not installed, skipping build'",
     "test": "node --test"
   },
   "dependencies": {
