@@ -9,6 +9,7 @@ import email
 from email.mime.text import MIMEText
 import openai
 import subprocess
+from agent_manager import AgentManager
 from self_improvement_lattice import SelfImprovementLattice
 try:
     import firebase_admin
@@ -79,6 +80,7 @@ class Hecate:
         self.admin_file = "admin_status.txt"
         self._load_admin_status()
         self.lattice = SelfImprovementLattice()
+        self.agent_manager = AgentManager()
         # store recent conversation turns for context-aware replies
         self.conversation = []
         # optional Firebase database for memory retention
@@ -207,6 +209,21 @@ class Hecate:
 
         elif user_input.strip() == "update:repo":
             return self._update_repo()
+
+        elif user_input.startswith("agent:add:"):
+            try:
+                name, desc = user_input.split("agent:add:", 1)[1].split("|", 1)
+                self.agent_manager.add_agent(name.strip(), desc.strip())
+                return f"{self.name}: Agent '{name.strip()}' added."
+            except ValueError:
+                return f"{self.name}: Use 'agent:add:name|description'"
+
+        elif user_input.strip() == "agent:list":
+            agents = self.agent_manager.list_agents()
+            if not agents:
+                return f"{self.name}: No agents registered."
+            lines = [f"{a['name']}: {a['description']}" for a in agents]
+            return f"{self.name}: Registered agents:\n" + "\n".join(lines)
 
         elif user_input.startswith("email:"):
             try:
