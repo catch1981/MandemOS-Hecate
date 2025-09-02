@@ -179,6 +179,21 @@ Both the CLI tools and the API server automatically read the key from these loca
 3. Open `index.html` in your browser. The page will communicate with the server at `http://localhost:8080` by default.
    Set the `PORT` environment variable or use the `--port` option to run additional instances on different ports on Windows, macOS, or Linux.
 
+### Autostart and Crash Recovery
+
+Hecate can install itself as a systemd service so it launches on system boot
+and restarts automatically if it crashes. Run the helper script as root:
+
+```bash
+sudo python install_service.py
+```
+
+The service executes `autostart.py`, which monitors the main process and
+records each crash. After a configurable number of consecutive crashes
+(`MAX_CRASHES`, default `5`), it rolls back the repository to the last known
+good commit to prevent endless restart loops. Use `RESTART_DELAY` to control
+the delay between restart attempts.
+
 ### Command Line Chat
 If you prefer to talk to Hecate directly in your terminal, run the small CLI utility:
 
