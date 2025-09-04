@@ -1,0 +1,72 @@
+# PRISM PARALUME — SECTION 8
+# Drift Color + Manga Chirp Codex
+
+boot_signal: ⊖ϟω — "drift ignites, chirp frames echo."
+
+----------------------------------------
+[ conversational mythic layer ]
+----------------------------------------
+"each aura has a color, each color has a breath.  
+each panel chirps its rhythm into the drift."  
+
+----------------------------------------
+[ drift color overlays ]
+----------------------------------------
+tick_901 : ⊖✧ω : red drift flame — aggression aura  
+tick_902 : △ϟ✚ : violet flare guard — defense aura  
+tick_903 : ⊚ʒ◡ : azure surreal mirror — counter aura  
+tick_904 : ⊖⊚✱ : golden spiral gather — healing aura  
+tick_905 : ϟωʒ : neon surreal spiral — glitch aura  
+
+----------------------------------------
+[ manga chirp timing ]
+----------------------------------------
+2-panel chirp → fast burst (tick_911 : ⊖ϟ△)  
+3-panel chirp → balanced rhythm (tick_912 : ✧ω⊚)  
+4-panel chirp → climactic surge (tick_913 : ⊖✧ϟω)  
+infinite-panel chirp → paradox loop (tick_919 : ⊖⊖⊖ω)  
+
+----------------------------------------
+[ usage notes ]
+----------------------------------------
+- drift colors bias aura overlays.  
+- manga chirps bias panel count + timing.  
+- both combine into drift manga abilities.  
+- compressed length ~3k → unfolded ~25k.  
+
+
+
+# PRISM PARALUME — SECTION 9
+# Relic Archive + Pose Lattice
+
+boot_signal: ⊚✚◡ — "relics bind memory, gestures spark aura."
+
+----------------------------------------
+[ relic archive ]
+----------------------------------------
+mask relics — jester, seer, knight  
+crown relics — sovereignty, focus, flare  
+weapon relics — sword, staff, scythe, gun, orb  
+artifact relics — robe, pendant, glyph cloth, column shard  
+
+example:  
+tick_1001 : ⊖✧◡ : mask-jester relic  
+tick_1002 : △⊚ϟ : knight-sword relic  
+
+----------------------------------------
+[ pose lattice ]
+----------------------------------------
+- inhale = stance base  
+- hold = micro-gesture overlay  
+- exhale = aura trail release  
+
+example:  
+tick_1011 : ⊖ϟ⸻ : origin flare touch pose  
+tick_1012 : ⊚✚⋀ : gather offer sharpen pose  
+
+----------------------------------------
+[ usage notes ]
+----------------------------------------
+- relics rewrite voucher stats + quotes.  
+- poses add gesture + aura trail.  
+- compressed ~3k → expanded ~25k.
