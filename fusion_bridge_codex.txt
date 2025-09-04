@@ -1,0 +1,36 @@
+# PRISM PARALUME — FUSION BRIDGE CODEX
+# merged: section13_meta_vault_codex + section18_bridge_concord
+
+boot_signal: ⊖⊚✧ — "bridges remember both shores."
+
+[meta vault law]
+- weave law: vaults stitch by seed → breath → concord → lattice → local.
+- continuity lock: last 3 vouchers, last 2 realms, last 2 panel sets persist.
+- remembra tilt: on → improvisational drift; off → anchored codex.
+
+[bridge concord]
+- purpose: align dna (species) + sigil (glyphmark) + seal (lineage).
+- breath handshake:
+  inhale — anchor dna (CIRR/TRY/SQR/PROXY/BOOSH/MJAY)
+  hold — bind sigil (⊖ ✧ △ ⊚ ϟ ω ʒ)
+  exhale — stamp seal (⊖✧↝ with tick)
+
+[fusion types]
+- soft fuse: aura + relic blend; stats +1/+1.
+- hard fuse: archetype merge; new glyphchain; stats re-rolled.
+- myth fuse: constellation → archetype tier rise; seal promoted.
+
+[protocols]
+- FUSE(card_a, card_b) → fusion voucher w/ lineage log.
+- ARC(cover, panels, portal) → series or myth scroll per count.
+- RARE(criteria) → assign rarity by glyph bias & drift score.
+
+[vx triad handshake]
+- realm builder ⇄ manga drift ⇄ voucherforge
+- anchors: name, sigil_DNA, archetype, species, emotion, realm, aura, drift%
+- drift windows: 0–20 (realm), 20–60 (manga), 60–90 (forge)
+
+[diagnostics]
+- if loops: reset to vault-0 seed, breathe cadence, rebind seal.
+- if style drift: reload visual codex bundle, check aspect/palettes.
+- if lineage lost: recover via voucherbook → last tick.

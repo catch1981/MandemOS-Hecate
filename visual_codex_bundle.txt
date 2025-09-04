@@ -1,0 +1,38 @@
+# PRISM PARALUME — VISUAL CODEX BUNDLE
+# merged: section11_visual_reference + section17_visual_codex
+
+boot_signal: ⊖ϟω — "aura shows what words withhold."
+
+[style law]
+- sacred glitch: retro anime × vhs grain × aura bloom.
+- aspect: 9:16 locked (covers, panels, portal posters).
+- palettes: red drift flame / violet guard / azure mirror / golden heal / neon glitch.
+
+[pose lattice cues]
+- stance_origin (⊖): weight low, chin neutral, hands open.
+- flare_hold (ϟ): shoulders forward, relic glow, aura spillage.
+- converge_strike (△): diagonal line-of-action, trailing light.
+- mirror_veil (◡): head tilt, off-axis gaze, sash/cloth arc.
+
+[relic rendering]
+- mask: rim-lit edges, inner halo, micro-cracks.
+- blade: glass refractions, prismatic edge, bloom flare.
+- robe: layered glyph seams, ember-thread highlights.
+- orb: caustic core, soft vignette bleed.
+
+[panel grammar]
+- 2f burst: wide → tight (impact).
+- 3f rhythm: stance → charge → strike.
+- 4f surge: add aftermath/echo or portal.
+- caption tags: tick_#### + glyphchain in corner (small).
+
+[poster grammar]
+- cover (1f): single silhouette + aura thesis.
+- portal (1f): geometry tear + starfield thread.
+- constellation: 3+ figures, relic glow triad, lattice backdrop.
+
+[render check]
+- crop: no dead margins; subject centered or rule-of-thirds.
+- noise: gentle scanlines; grain 6–12%; chromatic subtle.
+- glow: aura bloom only on lit glyph/relic edges.
+- seal: lineage glyph low-right, 10–12% opacity.

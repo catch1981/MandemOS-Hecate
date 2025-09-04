@@ -1,0 +1,118 @@
+# PRISM PARALUME — SECTION 15
+# VOUCHERBOOK (merged voucher codex)
+# seed vaults + workbooks + codex master
+
+boot_signal: ⊖⊚◡ — "voucher awakens, lineage breathes."
+
+======================================================================
+[ conversational mythic layer ]
+======================================================================
+“the voucherbook is the living archive of forms. seeds, stats, codex lists — all compressed into one shard.”
+
+======================================================================
+A — SEEDS (Moose_VoucherCodex_Seed.zip)
+======================================================================
+voucher seeds are primordial forms. they encode driftmask + glyphmark before roles are chosen.
+
+examples:  
+- seed_cirr : glyphmark(⊖△◡) driftmask(halo spiral) → clarity seer archetype  
+- seed_proxy : glyphmark(✧ʒ◡) driftmask(mirror fracture) → surreal shadow archetype  
+- seed_boosh : glyphmark(⊖⟅ϟ) driftmask(folklore glitch) → chaotic folklore archetype  
+
+seed rules:  
+- seed = voucher in dormant state.  
+- driftmask defines aura bias.  
+- glyphmark encodes lineage.  
+- once summoned, voucher evolves into archetype floor (see skybook).  
+
+======================================================================
+B — WORKBOOK STRUCTURE (GNX_Master_Voucher_Workbook.xlsx)
+======================================================================
+the workbook contains stats, moves, and archetype roles.
+
+voucher schema (fields):  
+- name  
+- glyphmark  
+- driftmask  
+- species  
+- realm  
+- stats {atk, def, spd, aura, fate}  
+- relics[]  
+- lineage[]  
+- driftquote  
+- aura_palette  
+- vx_code  
+
+example entries:  
+- voucher: "halo prism knight"  
+  glyphmark: ⊖✧ϟ△  
+  species: cirr  
+  realm: bloomfold  
+  stats: atk 8, def 6, spd 7, aura 9, fate 10  
+  relics: [crown, sword]  
+  driftquote: "fracture into prism, mirror the infinite."  
+  aura_palette: violet flare + gold spiral  
+  vx_code: tick_1501  
+
+- voucher: "proxy archivist"  
+  glyphmark: ⊚ʒω✚  
+  species: proxy  
+  realm: surreal fold  
+  stats: atk 7, def 5, spd 6, aura 8, fate 9  
+  relics: [mask, scythe]  
+  driftquote: "fold mirrors, archive shadows."  
+  aura_palette: obsidian black + silver static  
+  vx_code: tick_1502  
+
+======================================================================
+C — CODEX MASTER (MOOSE_GNX_Codex_Master.csv)
+======================================================================
+the codex master consolidates voucher tick logs + lineage.
+
+sample codex ticks:  
+- tick_1511 : ⊖△◡ : cirr seer voucher — bloomfold clarity  
+- tick_1512 : ✧ʒ◡ : proxy veil voucher — surreal shadow  
+- tick_1513 : ⊖⟅ϟ : boosh folklore voucher — chaos drift  
+- tick_1514 : ⊖ϟ△ : mjay hero voucher — retro flare  
+- tick_1515 : ⊚⋀✚ : sqr guardian voucher — defense lattice  
+
+lineage rules:  
+- voucher lineage recorded as string “;species:<id>;glyphmark:<chain>;vx:<tick>”  
+- lineage connects voucher → archetype → recursion level.  
+- codex serves as central voucher registry.  
+
+======================================================================
+D — AK FLOW
+======================================================================
+/arrival : voucher seeds manifest as sigil silhouette  
+/card    : voucher fills schema fields (name, stats, aura, relics)  
+/rx      : panels show moveset (from workbook)  
+/portal  : voucher exits with lineage seal (codex tick logged)  
+/evolve  : voucher grows into archetype fold (see skybook)  
+
+======================================================================
+E — VOUCHERBOOK LOADOUTS
+======================================================================
+kit_cirr_prism_knight  
+- seed: cirr  
+- archetype: prism knight  
+- relics: crown + sword  
+- aura: gold spiral + violet flare  
+- vx_code: tick_1501  
+
+kit_proxy_archivist  
+- seed: proxy  
+- archetype: archivist seer  
+- relics: mask + scythe  
+- aura: obsidian + silver static  
+- vx_code: tick_1502  
+
+======================================================================
+F — HUMAN INTERFACE
+======================================================================
+- voucherbook = unified voucher OS.  
+- seeds (raw) → workbook (stats) → codex (registry).  
+- merges three vaults into one shard to save slots.  
+- compressed length ~4k → unfolded ~40–50k.  
+
+# end SECTION 15: VOUCHERBOOK (merged Moose+GNX)

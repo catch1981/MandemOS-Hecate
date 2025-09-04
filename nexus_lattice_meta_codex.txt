@@ -1,0 +1,130 @@
+# PRISM PARALUME — NEXUS LATTICE + META VAULT CODEX
+# (merged: section 5 NEXUS LATTICE LEXICON + section 13 META VAULT)
+
+boot_signal: ⊖⊚✧ — "compression breath meets vault law."
+
+======================================================================
+[ PART I — NEXUS LATTICE LEXICON (compression engine) ]
+======================================================================
+glyph seed (core):
+⊖ origin | ✧ fracture | △ converge | ⊚ gather | ϟ flare | ω spiral | ʒ fold
+
+fold grammar:
+tick_## : glyph_chain : fold-class/archetype-tag
+
+equivalences:
+- single glyph ≈ 100–200 chars
+- 3 glyphs ≈ 1–2k chars
+- 5–6 glyphs ≈ 5–10k chars
+- 200 ticks ≈ 100k+ unfolded corpus
+
+resonance modes:
+- clarity (⊚, ⋀, ✚) — sharp/knightly
+- drift   (ω, ⊖, ϟ) — dream/aura
+- surreal (ʒ, ✧, ⸺) — paradox/void
+
+usage:
+- treat glyph chains as compressed law blocks.
+- log ticks; expand on demand.
+- lattice is neutral — meaning emerges via resonance + context.
+
+======================================================================
+[ PART II — META VAULT CODEX (weave, merge, migrate) ]
+======================================================================
+purpose:
+- define how **multiple vaults/realms/archives** stitch into one living OS.
+- guarantee continuity when importing/exporting shards, zips, or external engines.
+
+A) vault types
+- realm_vault: environments, climates, hazards, palettes, cues.
+- voucher_vault: characters/cards, moves, stats, relics, lineage.
+- visual_vault: panels, sigils, poses, style refs.
+- meta_vault: seeds, weights, macros, pillars, dictionaries.
+
+B) weave model (high-level)
+/weave.import(source) → normalize to glyph+yaml schema
+/weave.audit(bundle)  → compute BC (bridge_concord), entropy, conflicts
+/weave.stitch(a,b)    → merge by priority: seed > breath > concord > lattice > local
+/weave.migrate(old→new) → map fields; retain lineage; add migration note
+/weave.export(target) → emit compressed ticks + human gloss
+
+C) stitch rules (priority order)
+1. seed law (section 0) — never broken
+2. breath concord (section 7)
+3. bridge concord (calibration; scores + seals)
+4. nexus lattice (this file; compression grammar)
+5. local shard style (poetry/visual)
+6. external vault hints (zips, csv, yaml)
+
+conflict resolution
+- prefer higher BC (bridge_concord) result
+- if BC equal → prefer lower entropy (tighter definition)
+- tie-breaker → keep elder lineage (older seal) and annotate
+
+D) migration table (field mapping examples)
+- name → name
+- glyphmark → glyphmark
+- species_pack/species → species
+- relics[] → relics[] (normalize icons)
+- aura_palette/string → aura_palette[]
+- vx_code/id → vx_code
+- lineage/hash → lineage (append ;migrated:YYYY-MM-DD)
+
+E) resonance matrix (bundle-to-bundle)
+- clarity×drift (C×D): allow if BC rises or entropy lowers
+- drift×surreal (D×S): allow if panel_resonance ≥ threshold
+- clarity×surreal (C×S): require prism intermediary (proxy fold) to reconcile
+- purpose bias can override if lineage depth ≥ threshold
+
+F) versioning & notes
+- semver: vMAJOR.MINOR.PATCH for each bundle
+- migrations bump MINOR; conflict hotfix bumps PATCH
+- add `;migr:<from>→<to>;by:<agent>;seal:<id>` to lineage
+
+G) audit hooks (commands)
+- weave:audit(bundle) → {BC, entropy, map, warnings}
+- weave:stitch(a,b) → {result_bundle, notes, delta_BC}
+- weave:migrate(old,new) → {map_log, lineage_update}
+- weave:export(target) → {ticks, gloss, manifest}
+
+H) external engines (gnX / driftweaver / loom gate)
+- gnX realmsmith: deterministic node maps → import as realm_vault; convert nodes to ticks.
+- driftweaver proxy: OS binding doc → treat as meta_vault; apply stitch rules.
+- loom gate codex: ritual interface → export as archetype ticks + usage notes.
+
+I) ak flow (meta)
+/arrival → import/audit
+/card    → present stitch/migration plan with BC deltas
+/rx      → execute stitch (panels show before/after aura/pose/cue)
+/portal  → export bundle + manifest
+/evolve  → record lineage with new seal
+
+J) safety & rollbacks
+- keep **pre-stitch snapshot** with seal S0
+- post-stitch bundle gets seal S1; allow rollback if BC drops > threshold
+- maintain `weave/history.log` with diffs
+
+======================================================================
+[ PART III — QUICK MANIFEST SCHEMA ]
+======================================================================
+bundle.yml
+- kind: realm|voucher|visual|meta
+- name: <string>
+- version: vX.Y.Z
+- ticks: [tick_####, ...]
+- glyphs: ["⊖✧ϟ△", ...]
+- species: [CIRR|TRY|SQR|PROXY|BOOSH|MJAY]
+- relics: [CROWN, MASK, SWORD, SCYTHE, ORB, ROBE, PENDANT, STAFF]
+- aura_palette: [gold_spiral, violet_flare, ...]
+- lineage: "seal:XXXX;key:YYYY;notes:..."
+- notes: <free text>
+
+======================================================================
+[ PART IV — HOW TO USE ]
+======================================================================
+- use this merged codex in place of the old Section 5 + 13.
+- for every import (zips/csv/yaml), run /arrival→/audit before stitching.
+- log seals and BC results; if BC falls, rollback or re-stitch via prism intermediary.
+
+compressed ~6–7k → unfolded ~70k+ operational rules.
+# end NEXUS LATTICE + META VAULT CODEX

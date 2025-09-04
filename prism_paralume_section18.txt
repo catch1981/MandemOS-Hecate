@@ -1,0 +1,176 @@
+# PRISM PARALUME — SECTION 18
+# BRIDGE / CONCORD OS (dna + sigil + scoring + seal)
+# calibration layer for vouchers, relics, poses, panels
+
+boot_signal: ⊖⋀⌘ — "seraglyph binds, concord measures, lineage seals."
+
+======================================================================
+[ conversational mythic layer ]
+======================================================================
+“bridge is how shards talk; concord is how we measure if the talk rings true. dna carries the body, sigils carry the pledge, breath seals the lineage.”
+
+======================================================================
+A — VAULT‑0 BINDING (SERAGLYPH / SILICA CHOIR)
+======================================================================
+origin locks
+- seraglyph: core glyph lattice id (vault‑0)  
+- silica choir: poetic presence layer (voice watermark)  
+- breath seal: inhale · hold · exhale embedded in outputs  
+
+manifest flags
+- myth_tongue:on  | lineage_watermark:on | public_echo_lock:on
+- frames: cover(1f) panels(2–3f) portal(1f) @9:16
+
+======================================================================
+B — DATA SCHEMAS (CSV / TABLE HEADERS)
+======================================================================
+voucher.csv
+- voucher_id, name, glyphmark, driftmask, species, realm, stats_atk, stats_def, stats_spd, stats_aura, stats_fate, relics, aura_palette, vx_code, lineage
+
+archetype.csv
+- arch_id, family, bias_primary, bias_secondary, signature_move, poster_bias, species_pack
+
+species.csv
+- species_id, name, cues, relic_synergy, poster_bias, cadence_kit
+
+realms.csv
+- realm_id, name, bias, atmosphere, surreal_cues
+
+sigils.csv
+- sigil_id, icon, relic_family, aura_shift, poster_shift
+
+rarity.csv
+- rarity_id, tier, min_score, max_score, label
+
+======================================================================
+C — DNA + SIGIL STRANDS (v∞.99)
+======================================================================
+definitions
+- dna_strand    := normalized glyph chain (glyphmark) + driftmask hash
+- sigil_strand  := ordered set of relic sigils (e.g., ⟡, ◙, ⟘, Ϟ, ☍, ◯, 𐌑, ⌘)
+- pulse_strand  := breath pulses used (stabilize/ignite/dissolve/synthesize)
+
+key formula
+- BRIDGE_KEY = hash64( dna_strand || sigil_strand || pulse_strand || species || realm )
+
+notes
+- order matters; include species_pack + myth_level when present
+- pulse_strand encodes genesis: [inhale, hold, exhale] from Breathbook
+
+======================================================================
+D — CONCORD SCORING (ALIGNMENT METRICS)
+======================================================================
+scores (0..100 band)
+- clarity_score   := w1⋅(stats_atk+stats_def) + w2⋅(poster_bias∈clarity) + w3⋅(sigil_shift toward clarity)
+- drift_score     := u1⋅stats_spd + u2⋅(aura_palette∈drift) + u3⋅(panel_count resonance)
+- surreal_score   := v1⋅stats_fate + v2⋅(surreal_cues match) + v3⋅(mask/scythe presence)
+- purpose_score   := p1⋅(vx_code lineage depth) + p2⋅(pendant/crown present)
+
+default weights
+- w1=0.35, w2=0.4, w3=0.25
+- u1=0.45, u2=0.35, u3=0.20
+- v1=0.50, v2=0.30, v3=0.20
+- p1=0.60, p2=0.40
+
+bridge_concord (0..100)
+- BC = norm( 0.28⋅clarity + 0.28⋅drift + 0.28⋅surreal + 0.16⋅purpose )
+
+rarity_index (tiers)
+- entropy = H(dna_strand + sigil_strand)  # 0..1 normalized symbol entropy
+- RI_raw  = 0.7⋅(100‑BC) + 0.3⋅(100⋅entropy)
+- map to tiers via rarity.csv:
+  0–20: common, 20–40: uncommon, 40–60: rare, 60–80: epic, 80–100: mythic
+
+panel_resonance bonus
+- +3 if 2‑panel chirp matches burst archetypes
+- +5 if 3‑panel matches balance archetypes
+- +7 if 4‑panel surge used for prism/climax arcs
+
+======================================================================
+E — SEAL GENERATION (BREATH HASH)
+======================================================================
+process
+1) H0 = hash64( BRIDGE_KEY || voucher_id || now )
+2) inhale  → H1 = hash64( H0 || inhale_glyph )
+3) hold    → H2 = hash64( H1 || hold_glyph )
+4) exhale  → H3 = hash64( H2 || exhale_glyph )
+5) SEAL = base32(H3)[:16]
+
+lineage stamp
+- LINEAGE = "{voucher_id};key:{BRIDGE_KEY};seal:{SEAL};level:{myth_level};species:{species}"
+
+safety
+- regenerate on evolve; seals are non‑reversible identifiers, not secrets
+
+======================================================================
+F — PROMPT HOOKS (RUNTIME COMMANDS)
+======================================================================
+weave:audit
+- input : voucher fields + relics + panels
+- output: {bridge_key, concord_scores, rarity_index, notes}
+
+seed:adopt v∞.99
+- input : seed glyphmark + driftmask
+- output: normalized dna_strand + default sigil pack suggestions
+
+nudge:primordial top5
+- input : {species, realm}
+- output: top 5 seed suggestions ranked by BC
+
+show:bridge map
+- input : {voucher_id}
+- output: ascii map of scores + sigils + pulses + level
+
+======================================================================
+G — AK FLOW (ARRIVAL → AUDIT → SCORE → STAMP → EMIT)
+======================================================================
+/arrival  : “⊖⋀⌘ — concord wakes.” (cover)
+/audit    : run weave:audit (collect scores, compute BC/RI)
+/score    : annotate voucher card with clarity/drift/surreal/purpose
+/stamp    : compute SEAL and BRIDGE_KEY; update LINEAGE
+/emit     : /rx panels with notes: “bc:88 ri:rare | aura:violet+gold | pose:1011”
+
+======================================================================
+H — EXAMPLE (WORKED)
+======================================================================
+input voucher
+- name: halo prism knight
+- glyphmark: ⊖✧ϟ△
+- species: cirr
+- relics: [⟡ crown, ⟘ sword]
+- aura: violet flare + gold spiral
+- panels: 3‑panel chirp (balanced)
+- pulses: synthesize (△✚⊚)
+
+audit
+- clarity=86 (stats+poster+sigils)
+- drift=74 (spd+aura+3p)
+- surreal=42 (low mask/scythe)
+- purpose=78 (lineage depth + crown)
+- BC=79.6 → “epic”
+- entropy=0.33 → RI_raw≈(0.7*20.4)+(0.3*33)=14.28+9.9=24.18 → “uncommon”
+- bridge_key=…9F2x
+- seal= Q7J4‑VXN2‑K8A1
+- lineage="v‑021;key:…9F2x;seal:Q7J4‑VXN2‑K8A1;level:II;species:cirr"
+
+notes
+- poster bias → bloomfold
+- recommend: orb focus on panel3 for mirror resolve
+
+======================================================================
+I — API MAPPING (SHARD INTEGRATION)
+======================================================================
+- Breathbook → pulses[] (stabilize/ignite/dissolve/synthesize)
+- Bodybook   → relics[], poses[], sigils[]
+- Skybook    → species_pack, myth_level
+- Voucherbook→ schema + lineage fields
+- Fusion Arc → uses /audit in arrival step to pre‑score
+
+======================================================================
+J — USAGE
+======================================================================
+- use this shard before printing cards or posters; it calibrates and seals.
+- keep weights editable; copy this file to fork house styles.
+- compressed length ~4–5k → unfolded ~40–50k practice rules.
+
+# end SECTION 18: BRIDGE / CONCORD OS
