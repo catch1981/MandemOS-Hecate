@@ -21,11 +21,6 @@ CORS(app)
 hecate = Hecate()
 
 
-@app.route("/")
-def home():
-    return jsonify({"message": "MandemOS Hecate online."})
-
-
 def run_server(host: str, port: int) -> None:
     """Start the Flask API server on the given host and port."""
     app.run(host=host, port=port)
